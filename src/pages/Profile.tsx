@@ -35,8 +35,8 @@ const Profile = () => {
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
             <div className="w-14 h-14 rounded-full bg-foreground/80 flex items-center justify-center relative">
-              <span className="text-card font-bold text-lg">B</span>
-              <span className="absolute -bottom-0.5 -left-0.5 w-5 h-5 rounded-full bg-primary flex items-center justify-center text-[8px] font-bold text-primary-foreground border-2 border-card">3</span>
+              <span className="text-card font-bold text-lg">{displayName[0]?.toUpperCase()}</span>
+              <span className="absolute -bottom-0.5 -left-0.5 w-5 h-5 rounded-full bg-primary flex items-center justify-center text-[8px] font-bold text-primary-foreground border-2 border-card">{tier}</span>
             </div>
             <div>
               <p className="text-lg font-bold text-foreground">Hi, Bayonle</p>
