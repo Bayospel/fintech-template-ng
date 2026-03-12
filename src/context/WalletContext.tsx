@@ -1,4 +1,6 @@
-import { createContext, useContext, useState, ReactNode } from "react";
+import { createContext, useContext, useState, useEffect, useCallback, ReactNode } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "./AuthContext";
 
 export interface Transaction {
   id: string;
@@ -7,7 +9,7 @@ export interface Transaction {
   amount: number;
   date: string;
   status: string;
-  icon: "interest" | "betting" | "transfer" | "airtime" | "add" | "stamp" | "merchant";
+  icon: string;
   bank?: string;
   account?: string;
   reference: string;
@@ -17,58 +19,107 @@ export interface Transaction {
 interface WalletContextType {
   balance: number;
   transactions: Transaction[];
-  addMoney: (amount: number) => void;
-  deductMoney: (amount: number, recipientName: string, bank?: string, account?: string, remark?: string) => string;
+  loading: boolean;
+  addMoney: (amount: number) => Promise<void>;
+  deductMoney: (amount: number, recipientName: string, bank?: string, account?: string, remark?: string) => Promise<string>;
+  refreshData: () => Promise<void>;
 }
 
 const WalletContext = createContext<WalletContextType | null>(null);
 
 const genRef = () => `2303${Date.now().toString().slice(-16)}`;
-const genId = () => Math.random().toString(36).slice(2, 10);
 
-const initialTransactions: Transaction[] = [
-  { id: genId(), name: "OWealth Interest Earned", type: "Credit", amount: 0.09, date: "Mar 12th, 02:10:53", status: "Successful", icon: "interest", reference: "23031202105312345678" },
-  { id: genId(), name: "Betting", type: "Betting", amount: -20000, date: "Mar 11th, 20:03:07", status: "Successful", icon: "betting", reference: "23031120030798765432" },
-  { id: genId(), name: "Transfer to OPEYEMI SULIAT ISRA...", type: "Transfer", amount: -5000, date: "Mar 11th, 19:45:21", status: "Successful", icon: "transfer", bank: "OPay", account: "701 980 3840", reference: "23031119452187654321" },
-  { id: genId(), name: "Transfer to MARIAM OLUWAPELU...", type: "Transfer", amount: -1000, date: "Mar 11th, 19:36:28", status: "Successful", icon: "transfer", bank: "Moniepoint", account: "8076399304", reference: "23031119362876543210" },
-  { id: genId(), name: "Stamp Duty", type: "Debit", amount: -50, date: "Mar 11th, 19:31:33", status: "Successful", icon: "stamp", reference: "23031119313365432109" },
-  { id: genId(), name: "Transfer to IDOWU BABATUNDE", type: "Transfer", amount: -15000, date: "Mar 11th, 19:31:26", status: "Successful", icon: "transfer", bank: "Moniepoint", account: "5046737368", reference: "23031119312654321098" },
-  { id: genId(), name: "Transfer from AWE MFB", type: "Credit", amount: 41000, date: "Mar 11th, 19:30:58", status: "Successful", icon: "add", bank: "AWE MFB", reference: "23031119305843210987" },
-  { id: genId(), name: "Third-Party Merchant Order", type: "Debit", amount: -17600, date: "Mar 11th, 19:21:58", status: "Successful", icon: "merchant", reference: "23031119215832109876" },
-];
-
-const formatDate = () => {
-  const now = new Date();
-  const day = now.getDate();
-  const suffix = day === 1 || day === 21 || day === 31 ? "st" : day === 2 || day === 22 ? "nd" : day === 3 || day === 23 ? "rd" : "th";
-  return `${now.toLocaleDateString("en-US", { month: "short" })} ${day}${suffix}, ${now.toLocaleTimeString("en-GB", { hour12: false })}`;
+const formatCreatedAt = (iso: string) => {
+  const d = new Date(iso);
+  const day = d.getDate();
+  const suffix = [1, 21, 31].includes(day) ? "st" : [2, 22].includes(day) ? "nd" : [3, 23].includes(day) ? "rd" : "th";
+  return `${d.toLocaleDateString("en-US", { month: "short" })} ${day}${suffix}, ${d.toLocaleTimeString("en-GB", { hour12: false })}`;
 };
 
 export const WalletProvider = ({ children }: { children: ReactNode }) => {
-  const [balance, setBalance] = useState(20.48);
-  const [transactions, setTransactions] = useState<Transaction[]>(initialTransactions);
+  const { user } = useAuth();
+  const [balance, setBalance] = useState(0);
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const addMoney = (amount: number) => {
-    setBalance((prev) => prev + amount);
-    const ref = genRef();
-    setTransactions((prev) => [
-      { id: genId(), name: "Add Money", type: "Credit", amount, date: formatDate(), status: "Successful", icon: "add", reference: ref },
-      ...prev,
+  const refreshData = useCallback(async () => {
+    if (!user) {
+      setBalance(0);
+      setTransactions([]);
+      setLoading(false);
+      return;
+    }
+
+    const [walletRes, txRes] = await Promise.all([
+      supabase.from("wallets").select("balance").eq("user_id", user.id).single(),
+      supabase.from("transactions").select("*").eq("user_id", user.id).order("created_at", { ascending: false }),
     ]);
+
+    if (walletRes.data) setBalance(Number(walletRes.data.balance));
+    if (txRes.data) {
+      setTransactions(
+        txRes.data.map((t: any) => ({
+          id: t.id,
+          name: t.name,
+          type: t.type,
+          amount: Number(t.amount),
+          date: formatCreatedAt(t.created_at),
+          status: t.status,
+          icon: t.icon,
+          bank: t.bank,
+          account: t.account,
+          reference: t.reference,
+          remark: t.remark,
+        }))
+      );
+    }
+    setLoading(false);
+  }, [user]);
+
+  useEffect(() => {
+    refreshData();
+  }, [refreshData]);
+
+  const addMoney = async (amount: number) => {
+    if (!user) return;
+    const ref = genRef();
+
+    await supabase.from("wallets").update({ balance: balance + amount }).eq("user_id", user.id);
+    await supabase.from("transactions").insert({
+      user_id: user.id,
+      name: "Add Money",
+      type: "Credit",
+      amount,
+      icon: "add",
+      reference: ref,
+    });
+
+    await refreshData();
   };
 
-  const deductMoney = (amount: number, recipientName: string, bank?: string, account?: string, remark?: string) => {
+  const deductMoney = async (amount: number, recipientName: string, bank?: string, account?: string, remark?: string) => {
+    if (!user) return "";
     const ref = genRef();
-    setBalance((prev) => prev - amount);
-    setTransactions((prev) => [
-      { id: genId(), name: recipientName, type: "Transfer", amount: -amount, date: formatDate(), status: "Successful", icon: "transfer", bank, account, reference: ref, remark },
-      ...prev,
-    ]);
+
+    await supabase.from("wallets").update({ balance: balance - amount }).eq("user_id", user.id);
+    await supabase.from("transactions").insert({
+      user_id: user.id,
+      name: recipientName,
+      type: "Transfer",
+      amount: -amount,
+      icon: "transfer",
+      bank,
+      account,
+      reference: ref,
+      remark,
+    });
+
+    await refreshData();
     return ref;
   };
 
   return (
-    <WalletContext.Provider value={{ balance, transactions, addMoney, deductMoney }}>
+    <WalletContext.Provider value={{ balance, transactions, loading, addMoney, deductMoney, refreshData }}>
       {children}
     </WalletContext.Provider>
   );

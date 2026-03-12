@@ -7,6 +7,7 @@ import {
 } from "lucide-react";
 import BottomNav from "@/components/BottomNav";
 import { useWallet } from "@/context/WalletContext";
+import { useAuth } from "@/context/AuthContext";
 
 const quickActions = [
   { icon: Phone, label: "Airtime", badge: "Up to 6%" },
@@ -22,16 +23,21 @@ const quickActions = [
 const Dashboard = () => {
   const navigate = useNavigate();
   const { balance, transactions, addMoney } = useWallet();
+  const { profile } = useAuth();
+  const displayName = profile?.display_name || "User";
   const [showBalance, setShowBalance] = useState(true);
   const [showAddMoney, setShowAddMoney] = useState(false);
   const [addAmount, setAddAmount] = useState("");
+  const [addLoading, setAddLoading] = useState(false);
 
-  const handleAddMoney = () => {
+  const handleAddMoney = async () => {
     const amt = parseFloat(addAmount);
     if (!amt || amt <= 0) return;
-    addMoney(amt);
+    setAddLoading(true);
+    await addMoney(amt);
     setAddAmount("");
     setShowAddMoney(false);
+    setAddLoading(false);
   };
 
   const getIcon = (type: string) => {
@@ -54,7 +60,7 @@ const Dashboard = () => {
               <span className="text-card text-xs font-bold">B</span>
               <span className="absolute -bottom-0.5 -left-0.5 w-5 h-5 rounded-full bg-primary flex items-center justify-center text-[8px] font-bold text-primary-foreground border-2 border-card">3</span>
             </div>
-            <span className="text-foreground font-semibold text-base">Hi, Bayonle</span>
+            <span className="text-foreground font-semibold text-base">Hi, {displayName}</span>
           </div>
           <div className="flex items-center gap-5">
             <div className="relative">
@@ -242,9 +248,9 @@ const Dashboard = () => {
                 </button>
               ))}
             </div>
-            <button onClick={handleAddMoney} disabled={!addAmount || parseFloat(addAmount) <= 0}
+            <button onClick={handleAddMoney} disabled={!addAmount || parseFloat(addAmount) <= 0 || addLoading}
               className="w-full py-4 rounded-full opay-gradient text-primary-foreground font-semibold disabled:opacity-40 transition-opacity">
-              Add ₦{addAmount ? parseFloat(addAmount).toLocaleString() : "0"}
+              {addLoading ? "Adding..." : `Add ₦${addAmount ? parseFloat(addAmount).toLocaleString() : "0"}`}
             </button>
           </div>
         </div>

@@ -1,8 +1,9 @@
 import { useNavigate } from "react-router-dom";
 import { Eye, EyeOff, Settings, ChevronRight, Shield, MessageCircle, Megaphone,
-  FileText, Gauge, CreditCard, Briefcase, Users } from "lucide-react";
+  FileText, Gauge, CreditCard, Briefcase, Users, LogOut } from "lucide-react";
 import { useState } from "react";
 import { useWallet } from "@/context/WalletContext";
+import { useAuth } from "@/context/AuthContext";
 import BottomNav from "@/components/BottomNav";
 
 const menuItems = [
@@ -22,6 +23,9 @@ const bottomMenuItems = [
 const Profile = () => {
   const navigate = useNavigate();
   const { balance } = useWallet();
+  const { profile, signOut } = useAuth();
+  const displayName = profile?.display_name || "User";
+  const tier = profile?.tier || 1;
   const [showBalance, setShowBalance] = useState(true);
 
   return (
@@ -31,12 +35,12 @@ const Profile = () => {
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
             <div className="w-14 h-14 rounded-full bg-foreground/80 flex items-center justify-center relative">
-              <span className="text-card font-bold text-lg">B</span>
-              <span className="absolute -bottom-0.5 -left-0.5 w-5 h-5 rounded-full bg-primary flex items-center justify-center text-[8px] font-bold text-primary-foreground border-2 border-card">3</span>
+              <span className="text-card font-bold text-lg">{displayName[0]?.toUpperCase()}</span>
+              <span className="absolute -bottom-0.5 -left-0.5 w-5 h-5 rounded-full bg-primary flex items-center justify-center text-[8px] font-bold text-primary-foreground border-2 border-card">{tier}</span>
             </div>
             <div>
-              <p className="text-lg font-bold text-foreground">Hi, Bayonle</p>
-              <span className="text-xs bg-primary/15 text-primary font-semibold px-2 py-0.5 rounded-full">⭐ Tier 3</span>
+              <p className="text-lg font-bold text-foreground">Hi, {displayName}</p>
+              <span className="text-xs bg-primary/15 text-primary font-semibold px-2 py-0.5 rounded-full">⭐ Tier {tier}</span>
             </div>
           </div>
           <button>
@@ -123,6 +127,16 @@ const Profile = () => {
             </button>
           ))}
         </div>
+      </div>
+
+      {/* Sign Out */}
+      <div className="px-4 mt-3 mb-4">
+        <button
+          onClick={async () => { await signOut(); navigate("/login"); }}
+          className="w-full flex items-center justify-center gap-2 py-3.5 rounded-full border border-destructive text-destructive font-semibold text-sm"
+        >
+          <LogOut size={16} /> Sign Out
+        </button>
       </div>
 
       <BottomNav />
