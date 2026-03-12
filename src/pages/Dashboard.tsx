@@ -248,9 +248,9 @@ const Dashboard = () => {
                 </button>
               ))}
             </div>
-            <button onClick={handleAddMoney} disabled={!addAmount || parseFloat(addAmount) <= 0}
+            <button onClick={handleAddMoney} disabled={!addAmount || parseFloat(addAmount) <= 0 || addLoading}
               className="w-full py-4 rounded-full opay-gradient text-primary-foreground font-semibold disabled:opacity-40 transition-opacity">
-              Add ₦{addAmount ? parseFloat(addAmount).toLocaleString() : "0"}
+              {addLoading ? "Adding..." : `Add ₦${addAmount ? parseFloat(addAmount).toLocaleString() : "0"}`}
             </button>
           </div>
         </div>
