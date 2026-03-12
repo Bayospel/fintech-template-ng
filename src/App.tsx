@@ -10,6 +10,7 @@ import Transfer from "./pages/Transfer";
 import TransferAmount from "./pages/TransferAmount";
 import Receipt from "./pages/Receipt";
 import Profile from "./pages/Profile";
+import TransactionHistory from "./pages/TransactionHistory";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -29,6 +30,7 @@ const App = () => (
             <Route path="/transfer/amount" element={<TransferAmount />} />
             <Route path="/receipt" element={<Receipt />} />
             <Route path="/me" element={<Profile />} />
+            <Route path="/transactions" element={<TransactionHistory />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

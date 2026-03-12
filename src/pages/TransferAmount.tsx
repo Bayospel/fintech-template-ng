@@ -20,7 +20,7 @@ const TransferAmount = () => {
   const handleSend = () => {
     const amt = parseFloat(amount);
     if (!amt || amt <= 0) return;
-    deductMoney(amt, recipientName);
+    const ref = deductMoney(amt, recipientName, bank, account, remark);
     navigate("/receipt", {
       state: {
         amount: amt,
@@ -28,7 +28,7 @@ const TransferAmount = () => {
         bank,
         account,
         remark,
-        reference: `2303120${Date.now().toString().slice(-14)}`,
+        reference: ref,
         date: new Date().toLocaleString("en-NG"),
       },
     });
