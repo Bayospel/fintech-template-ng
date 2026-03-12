@@ -112,14 +112,29 @@ const Dashboard = () => {
       <div className="px-4 mt-3">
         <div className="bg-card rounded-2xl p-4">
           <div className="space-y-4">
-            {transactions.slice(0, 3).map((tx, i) => (
-              <div key={i} className="flex items-center justify-between">
+            {transactions.slice(0, 3).map((tx) => (
+              <button
+                key={tx.id}
+                onClick={() => navigate("/receipt", {
+                  state: {
+                    amount: Math.abs(tx.amount),
+                    recipientName: tx.name,
+                    bank: tx.bank || "OPay",
+                    account: tx.account || "—",
+                    remark: tx.remark || "",
+                    reference: tx.reference,
+                    date: tx.date,
+                    isCredit: tx.amount > 0,
+                  },
+                })}
+                className="w-full flex items-center justify-between"
+              >
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center">
                     {getIcon(tx.icon)}
                   </div>
-                  <div>
-                    <p className="text-sm font-medium text-foreground">{tx.name}</p>
+                  <div className="text-left">
+                    <p className="text-sm font-medium text-foreground truncate max-w-[160px]">{tx.name}</p>
                     <p className="text-xs text-muted-foreground">{tx.date}</p>
                   </div>
                 </div>
@@ -129,7 +144,7 @@ const Dashboard = () => {
                   </p>
                   <span className="text-[10px] text-primary font-medium">{tx.status}</span>
                 </div>
-              </div>
+              </button>
             ))}
           </div>
         </div>

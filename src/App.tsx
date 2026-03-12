@@ -30,6 +30,7 @@ const App = () => (
             <Route path="/transfer/amount" element={<TransferAmount />} />
             <Route path="/receipt" element={<Receipt />} />
             <Route path="/me" element={<Profile />} />
+            <Route path="/transactions" element={<TransactionHistory />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
