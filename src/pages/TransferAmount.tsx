@@ -96,10 +96,10 @@ const TransferAmount = () => {
       <div className="px-4 pb-8">
         <button
           onClick={handleSend}
-          disabled={!amount || parseFloat(amount) <= 0 || parseFloat(amount) > balance}
+          disabled={!amount || parseFloat(amount) <= 0 || parseFloat(amount) > balance || sending}
           className="w-full py-4 rounded-full opay-gradient text-primary-foreground font-semibold text-base disabled:opacity-40 transition-opacity"
         >
-          Send ₦{amount ? parseFloat(amount).toLocaleString() : "0"}
+          {sending ? "Sending..." : `Send ₦${amount ? parseFloat(amount).toLocaleString() : "0"}`}
         </button>
         {amount && parseFloat(amount) > balance && (
           <p className="text-center text-xs text-destructive mt-2">Insufficient balance</p>

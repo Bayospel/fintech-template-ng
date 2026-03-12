@@ -129,6 +129,16 @@ const Profile = () => {
         </div>
       </div>
 
+      {/* Sign Out */}
+      <div className="px-4 mt-3 mb-4">
+        <button
+          onClick={async () => { await signOut(); navigate("/login"); }}
+          className="w-full flex items-center justify-center gap-2 py-3.5 rounded-full border border-destructive text-destructive font-semibold text-sm"
+        >
+          <LogOut size={16} /> Sign Out
+        </button>
+      </div>
+
       <BottomNav />
     </div>
   );
