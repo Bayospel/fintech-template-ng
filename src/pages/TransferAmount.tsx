@@ -1,12 +1,14 @@
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
+import { useWallet } from "@/context/WalletContext";
 
 const quickAmounts = [1000, 5000, 10000, 50000];
 
 const TransferAmount = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { balance, deductMoney } = useWallet();
   const { recipientName, bank, account } = (location.state as any) || {
     recipientName: "ADEBAYO OGUNDIMU",
     bank: "Moniepoint",
@@ -16,9 +18,12 @@ const TransferAmount = () => {
   const [remark, setRemark] = useState("");
 
   const handleSend = () => {
+    const amt = parseFloat(amount);
+    if (!amt || amt <= 0) return;
+    deductMoney(amt, recipientName);
     navigate("/receipt", {
       state: {
-        amount: parseFloat(amount),
+        amount: amt,
         recipientName,
         bank,
         account,
@@ -38,7 +43,6 @@ const TransferAmount = () => {
         <h1 className="font-semibold text-foreground text-lg">Enter Amount</h1>
       </div>
 
-      {/* Recipient info */}
       <div className="px-4 mt-4">
         <div className="opay-gradient-light rounded-xl p-4">
           <p className="text-sm font-semibold text-primary">{recipientName}</p>
@@ -46,7 +50,6 @@ const TransferAmount = () => {
         </div>
       </div>
 
-      {/* Amount input */}
       <div className="px-4 mt-6 flex-1">
         <div className="text-center mb-6">
           <div className="flex items-center justify-center gap-1">
@@ -60,10 +63,11 @@ const TransferAmount = () => {
               autoFocus
             />
           </div>
-          <p className="text-xs text-muted-foreground mt-2">Available: ₦245,830.50</p>
+          <p className="text-xs text-muted-foreground mt-2">
+            Available: ₦{balance.toLocaleString("en-NG", { minimumFractionDigits: 2 })}
+          </p>
         </div>
 
-        {/* Quick amounts */}
         <div className="flex gap-2 justify-center mb-8">
           {quickAmounts.map((qa) => (
             <button
@@ -76,7 +80,6 @@ const TransferAmount = () => {
           ))}
         </div>
 
-        {/* Remark */}
         <input
           type="text"
           placeholder="Add a remark (optional)"
@@ -89,11 +92,14 @@ const TransferAmount = () => {
       <div className="px-4 pb-8">
         <button
           onClick={handleSend}
-          disabled={!amount || parseFloat(amount) <= 0}
+          disabled={!amount || parseFloat(amount) <= 0 || parseFloat(amount) > balance}
           className="w-full py-4 rounded-full opay-gradient text-primary-foreground font-semibold text-base disabled:opacity-40 transition-opacity"
         >
           Send ₦{amount ? parseFloat(amount).toLocaleString() : "0"}
         </button>
+        {amount && parseFloat(amount) > balance && (
+          <p className="text-center text-xs text-destructive mt-2">Insufficient balance</p>
+        )}
       </div>
     </div>
   );
