@@ -39,8 +39,8 @@ const Profile = () => {
               <span className="absolute -bottom-0.5 -left-0.5 w-5 h-5 rounded-full bg-primary flex items-center justify-center text-[8px] font-bold text-primary-foreground border-2 border-card">{tier}</span>
             </div>
             <div>
-              <p className="text-lg font-bold text-foreground">Hi, Bayonle</p>
-              <span className="text-xs bg-primary/15 text-primary font-semibold px-2 py-0.5 rounded-full">⭐ Tier 3</span>
+              <p className="text-lg font-bold text-foreground">Hi, {displayName}</p>
+              <span className="text-xs bg-primary/15 text-primary font-semibold px-2 py-0.5 rounded-full">⭐ Tier {tier}</span>
             </div>
           </div>
           <button>

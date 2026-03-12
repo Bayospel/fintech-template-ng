@@ -17,10 +17,14 @@ const TransferAmount = () => {
   const [amount, setAmount] = useState("");
   const [remark, setRemark] = useState("");
 
-  const handleSend = () => {
+  const [sending, setSending] = useState(false);
+
+  const handleSend = async () => {
     const amt = parseFloat(amount);
     if (!amt || amt <= 0) return;
-    const ref = deductMoney(amt, recipientName, bank, account, remark);
+    setSending(true);
+    const ref = await deductMoney(amt, recipientName, bank, account, remark);
+    setSending(false);
     navigate("/receipt", {
       state: {
         amount: amt,
