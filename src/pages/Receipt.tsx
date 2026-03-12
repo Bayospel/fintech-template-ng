@@ -1,5 +1,5 @@
 import { useNavigate, useLocation } from "react-router-dom";
-import { CheckCircle, Share2, Download, Home } from "lucide-react";
+import { CheckCircle, Share2, Download, Home, ArrowDownLeft } from "lucide-react";
 
 const Receipt = () => {
   const navigate = useNavigate();
@@ -12,14 +12,17 @@ const Receipt = () => {
     remark: "",
     reference: "23083102135398765432",
     date: new Date().toLocaleString("en-NG"),
+    isCredit: false,
   };
+
+  const isCredit = data.isCredit || false;
 
   const details = [
     { label: "Status", value: "SUCCESSFUL", highlight: true },
     { label: "Date/Time", value: data.date },
-    { label: "Recipient", value: data.recipientName },
-    { label: "Recipient Bank", value: data.bank },
-    { label: "Account Number", value: data.account },
+    { label: isCredit ? "From" : "Recipient", value: data.recipientName },
+    ...(data.bank ? [{ label: isCredit ? "Source Bank" : "Recipient Bank", value: data.bank }] : []),
+    ...(data.account && data.account !== "—" ? [{ label: "Account Number", value: data.account }] : []),
     { label: "Sender", value: "BAYONLE ADEYEMI" },
     { label: "OPay Number", value: "701 980 3840" },
     { label: "Transaction Ref", value: data.reference },
@@ -28,12 +31,18 @@ const Receipt = () => {
 
   return (
     <div className="min-h-screen bg-background max-w-md mx-auto flex flex-col">
-      {/* Success Header */}
+      {/* Header */}
       <div className="opay-gradient pt-12 pb-8 px-4 text-center rounded-b-3xl">
-        <CheckCircle size={56} className="text-primary-foreground mx-auto mb-3" strokeWidth={1.5} />
-        <p className="text-primary-foreground/80 text-sm mb-1">Transfer Successful</p>
+        {isCredit ? (
+          <ArrowDownLeft size={56} className="text-primary-foreground mx-auto mb-3" strokeWidth={1.5} />
+        ) : (
+          <CheckCircle size={56} className="text-primary-foreground mx-auto mb-3" strokeWidth={1.5} />
+        )}
+        <p className="text-primary-foreground/80 text-sm mb-1">
+          {isCredit ? "Money Received" : "Transfer Successful"}
+        </p>
         <p className="text-4xl font-bold text-primary-foreground">
-          ₦{data.amount.toLocaleString("en-NG", { minimumFractionDigits: 2 })}
+          {isCredit ? "+" : ""}₦{data.amount.toLocaleString("en-NG", { minimumFractionDigits: 2 })}
         </p>
       </div>
 
@@ -52,7 +61,6 @@ const Receipt = () => {
           ))}
         </div>
 
-        {/* Disclaimer */}
         <p className="text-[10px] text-muted-foreground text-center mt-4 px-2 leading-relaxed">
           OPay is licensed by the Central Bank of Nigeria and insured by the NDIC.
         </p>
