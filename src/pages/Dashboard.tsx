@@ -209,7 +209,7 @@ const Dashboard = () => {
 
       {/* Saving Challenge */}
       <div className="px-4 mt-3">
-        <div className="bg-gradient-to-br from-amber-50 to-green-50 rounded-2xl p-4">
+        <div className="bg-gradient-to-br from-secondary to-opay-green-light rounded-2xl p-4">
           <div className="flex items-center justify-between mb-3">
             <h3 className="font-bold text-foreground">Saving Challenge 2026</h3>
             <Gift size={24} className="text-primary" />
