@@ -84,7 +84,7 @@ const Dashboard = () => {
                   {showBalance ? <Eye size={15} className="text-primary-foreground/70" /> : <EyeOff size={15} className="text-primary-foreground/70" />}
                 </button>
               </div>
-              <button className="text-primary-foreground/90 text-sm underline">
+              <button onClick={() => navigate("/transactions")} className="text-primary-foreground/90 text-sm underline">
                 Transaction History <ChevronRight size={12} className="inline" />
               </button>
             </div>
