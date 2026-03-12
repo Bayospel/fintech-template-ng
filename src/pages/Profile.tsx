@@ -23,6 +23,9 @@ const bottomMenuItems = [
 const Profile = () => {
   const navigate = useNavigate();
   const { balance } = useWallet();
+  const { profile, signOut } = useAuth();
+  const displayName = profile?.display_name || "User";
+  const tier = profile?.tier || 1;
   const [showBalance, setShowBalance] = useState(true);
 
   return (
