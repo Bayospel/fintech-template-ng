@@ -23,16 +23,21 @@ const quickActions = [
 const Dashboard = () => {
   const navigate = useNavigate();
   const { balance, transactions, addMoney } = useWallet();
+  const { profile } = useAuth();
+  const displayName = profile?.display_name || "User";
   const [showBalance, setShowBalance] = useState(true);
   const [showAddMoney, setShowAddMoney] = useState(false);
   const [addAmount, setAddAmount] = useState("");
+  const [addLoading, setAddLoading] = useState(false);
 
-  const handleAddMoney = () => {
+  const handleAddMoney = async () => {
     const amt = parseFloat(addAmount);
     if (!amt || amt <= 0) return;
-    addMoney(amt);
+    setAddLoading(true);
+    await addMoney(amt);
     setAddAmount("");
     setShowAddMoney(false);
+    setAddLoading(false);
   };
 
   const getIcon = (type: string) => {
