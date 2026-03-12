@@ -7,6 +7,7 @@ import {
 } from "lucide-react";
 import BottomNav from "@/components/BottomNav";
 import { useWallet } from "@/context/WalletContext";
+import { useAuth } from "@/context/AuthContext";
 
 const quickActions = [
   { icon: Phone, label: "Airtime", badge: "Up to 6%" },
