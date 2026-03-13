@@ -1,14 +1,14 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
-  Eye, EyeOff, Bell, ChevronRight, Send, Building2, ArrowDownLeft,
+  Eye, EyeOff, ChevronRight, Send, Building2, ArrowDownLeft,
   Phone, Wifi, Gamepad2, Tv, Shield, Banknote, Megaphone, MoreHorizontal,
   Plus, X, Gift, Users
 } from "lucide-react";
 import BottomNav from "@/components/BottomNav";
-import opayLogo from "@/assets/opay-logo.png";
+import DashboardHeader from "@/components/DashboardHeader";
 import { useWallet } from "@/context/WalletContext";
-import { useAuth } from "@/context/AuthContext";
+
 
 const quickActions = [
   { icon: Phone, label: "Airtime", badge: "Up to 6%" },
@@ -24,8 +24,6 @@ const quickActions = [
 const Dashboard = () => {
   const navigate = useNavigate();
   const { balance, transactions, addMoney } = useWallet();
-  const { profile } = useAuth();
-  const displayName = profile?.display_name || "User";
   const [showBalance, setShowBalance] = useState(true);
   const [showAddMoney, setShowAddMoney] = useState(false);
   const [addAmount, setAddAmount] = useState("");
@@ -54,28 +52,7 @@ const Dashboard = () => {
   return (
     <div className="min-h-screen bg-secondary pb-20 max-w-md mx-auto relative">
       {/* Header */}
-      <div className="bg-card px-4 pt-3 pb-2">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-11 h-11 rounded-full bg-foreground/80 flex items-center justify-center relative">
-              <span className="text-card text-xs font-bold">B</span>
-              <span className="absolute -bottom-0.5 -left-0.5 w-5 h-5 rounded-full bg-primary flex items-center justify-center text-[8px] font-bold text-primary-foreground border-2 border-card">3</span>
-            </div>
-            <span className="text-foreground font-semibold text-base">Hi, {displayName}</span>
-          </div>
-          <div className="flex items-center gap-5">
-            <div className="relative">
-              <span className="text-xs font-bold text-destructive absolute -top-2 left-1/2 -translate-x-1/2 bg-destructive/10 rounded-sm px-1">HELP</span>
-              <span className="text-lg">🎧</span>
-            </div>
-            <span className="text-lg">📷</span>
-            <button className="relative">
-              <Bell size={22} className="text-foreground" />
-              <span className="absolute -top-1.5 -right-2 w-5 h-5 rounded-full bg-destructive text-destructive-foreground text-[9px] font-bold flex items-center justify-center">37</span>
-            </button>
-          </div>
-        </div>
-      </div>
+      <DashboardHeader />
 
       {/* Balance Card */}
       <div className="px-4 mt-2">

@@ -8,28 +8,44 @@ const Login = () => {
   const navigate = useNavigate();
   const { signIn, signUp } = useAuth();
   const [isSignUp, setIsSignUp] = useState(false);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [username, setUsername] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
+  const [pin, setPin] = useState("");
+  const [showPin, setShowPin] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async () => {
     setError("");
+    if (!phoneNumber || !pin) {
+      setError("Please fill in all fields");
+      return;
+    }
+    if (pin.length < 4 || pin.length > 6) {
+      setError("PIN must be 4-6 digits");
+      return;
+    }
+    if (isSignUp && !username.trim()) {
+      setError("Please enter a username");
+      return;
+    }
+
     setLoading(true);
     if (isSignUp) {
-      const displayName = phoneNumber || email.split("@")[0];
-      const { error } = await signUp(email, password, displayName, phoneNumber);
+      const { error } = await signUp(phoneNumber, pin, username.trim());
       if (error) {
         setError(error.message);
       } else {
         navigate("/dashboard");
       }
     } else {
-      const { error } = await signIn(email, password);
+      const { error } = await signIn(phoneNumber, pin);
       if (error) {
-        setError(error.message);
+        if (error.message === "Invalid login credentials") {
+          setError("Wrong phone number or PIN");
+        } else {
+          setError(error.message);
+        }
       } else {
         navigate("/dashboard");
       }
@@ -60,62 +76,58 @@ const Login = () => {
         {isSignUp && (
           <div className="border-2 border-border rounded-lg p-3 mb-4 focus-within:border-primary relative">
             <label className="absolute -top-3 left-3 bg-background px-1 text-muted-foreground text-xs font-medium">
-              Phone Number
+              Username
             </label>
             <input
-              type="tel"
-              value={phoneNumber}
-              onChange={(e) => setPhoneNumber(e.target.value)}
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
               className="w-full bg-transparent outline-none text-foreground text-base"
-              placeholder="0701 234 5678"
+              placeholder="Enter your username"
             />
           </div>
         )}
 
         <div className="border-2 border-border rounded-lg p-3 mb-4 focus-within:border-primary relative">
           <label className="absolute -top-3 left-3 bg-background px-1 text-muted-foreground text-xs font-medium">
-            Email Address
+            Phone Number
           </label>
           <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            type="tel"
+            value={phoneNumber}
+            onChange={(e) => setPhoneNumber(e.target.value.replace(/[^0-9]/g, ""))}
             className="w-full bg-transparent outline-none text-foreground text-base"
-            placeholder="you@email.com"
+            placeholder="0701 234 5678"
           />
         </div>
 
         <div className="border-2 border-border rounded-lg p-3 mb-3 focus-within:border-primary relative">
           <label className="absolute -top-3 left-3 bg-background px-1 text-muted-foreground text-xs font-medium">
-            Password
+            PIN
           </label>
           <div className="flex items-center">
             <input
-              type={showPassword ? "text" : "password"}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="flex-1 bg-transparent outline-none text-foreground text-base"
-              placeholder="••••••••"
+              type={showPin ? "text" : "password"}
+              value={pin}
+              onChange={(e) => setPin(e.target.value.replace(/[^0-9]/g, "").slice(0, 6))}
+              className="flex-1 bg-transparent outline-none text-foreground text-base tracking-[0.5em]"
+              placeholder="••••"
+              inputMode="numeric"
             />
-            <button onClick={() => setShowPassword(!showPassword)} className="text-muted-foreground">
-              {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+            <button onClick={() => setShowPin(!showPin)} className="text-muted-foreground">
+              {showPin ? <EyeOff size={18} /> : <Eye size={18} />}
             </button>
           </div>
+          <p className="text-[10px] text-muted-foreground mt-1">4-6 digit PIN</p>
         </div>
 
         {error && <p className="text-destructive text-sm mb-3">{error}</p>}
-
-        {!isSignUp && (
-          <p className="text-sm text-muted-foreground mb-2">
-            Forgot password? <span className="text-primary font-medium cursor-pointer">Reset it</span>
-          </p>
-        )}
       </div>
 
       <div className="px-6 pb-8">
         <button
           onClick={handleSubmit}
-          disabled={!email || !password || loading}
+          disabled={!phoneNumber || !pin || loading || (isSignUp && !username)}
           className="w-full py-4 rounded-full opay-gradient text-primary-foreground font-semibold text-base disabled:opacity-40 transition-opacity"
         >
           {loading ? "Please wait..." : isSignUp ? "CREATE ACCOUNT" : "LOG IN"}
