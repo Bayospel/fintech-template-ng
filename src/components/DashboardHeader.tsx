@@ -22,7 +22,7 @@ const DashboardHeader = () => {
           {/* Help icon */}
           <button className="relative">
             <Headset size={24} className="text-foreground" />
-            <span className="absolute -top-2.5 -right-3 bg-pink-200 text-destructive text-[8px] font-bold px-1.5 py-0.5 rounded-full">
+            <span className="absolute -top-2.5 -right-3 bg-destructive/20 text-destructive text-[8px] font-bold px-1.5 py-0.5 rounded-full">
               HELP
             </span>
           </button>
