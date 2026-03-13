@@ -6,6 +6,7 @@ import {
   Plus, X, Gift, Users
 } from "lucide-react";
 import BottomNav from "@/components/BottomNav";
+import opayLogo from "@/assets/opay-logo.png";
 import { useWallet } from "@/context/WalletContext";
 import { useAuth } from "@/context/AuthContext";
 
