@@ -14,12 +14,15 @@ interface AuthContextType {
   user: User | null;
   profile: Profile | null;
   loading: boolean;
-  signUp: (email: string, password: string, displayName: string, phoneNumber?: string) => Promise<{ error: any }>;
-  signIn: (email: string, password: string) => Promise<{ error: any }>;
+  signUp: (phoneNumber: string, pin: string, username: string) => Promise<{ error: any }>;
+  signIn: (phoneNumber: string, pin: string) => Promise<{ error: any }>;
   signOut: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
+
+// Convert phone number to a pseudo-email for Supabase auth
+const phoneToEmail = (phone: string) => `${phone}@opay.local`;
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [session, setSession] = useState<Session | null>(null);
@@ -58,26 +61,27 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     return () => subscription.unsubscribe();
   }, []);
 
-  const signUp = async (email: string, password: string, displayName: string, phoneNumber?: string) => {
+  const signUp = async (phoneNumber: string, pin: string, username: string) => {
+    const email = phoneToEmail(phoneNumber);
     const { data, error } = await supabase.auth.signUp({
       email,
-      password,
-      options: { data: { display_name: displayName, phone_number: phoneNumber } },
+      password: pin,
+      options: { data: { display_name: username, phone_number: phoneNumber } },
     });
     
-    // Update profile with phone number after signup
-    if (!error && data.user && phoneNumber) {
+    if (!error && data.user) {
       await supabase
         .from("profiles")
-        .update({ phone_number: phoneNumber, display_name: displayName })
+        .update({ phone_number: phoneNumber, display_name: username })
         .eq("user_id", data.user.id);
     }
     
     return { error };
   };
 
-  const signIn = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
+  const signIn = async (phoneNumber: string, pin: string) => {
+    const email = phoneToEmail(phoneNumber);
+    const { error } = await supabase.auth.signInWithPassword({ email, password: pin });
     return { error };
   };
 
