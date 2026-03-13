@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
-  Eye, EyeOff, Bell, ChevronRight, Send, Building2, ArrowDownLeft,
+  Eye, EyeOff, ChevronRight, Send, Building2, ArrowDownLeft,
   Phone, Wifi, Gamepad2, Tv, Shield, Banknote, Megaphone, MoreHorizontal,
   Plus, X, Gift, Users
 } from "lucide-react";
 import BottomNav from "@/components/BottomNav";
-import opayLogo from "@/assets/opay-logo.png";
+import DashboardHeader from "@/components/DashboardHeader";
 import { useWallet } from "@/context/WalletContext";
 import { useAuth } from "@/context/AuthContext";
 
