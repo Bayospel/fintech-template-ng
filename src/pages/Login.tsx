@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { Eye, EyeOff } from "lucide-react";
+import opayLogo from "@/assets/opay-logo.png";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -9,23 +10,21 @@ const Login = () => {
   const [isSignUp, setIsSignUp] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [displayName, setDisplayName] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const [success, setSuccess] = useState("");
 
   const handleSubmit = async () => {
     setError("");
-    setSuccess("");
     setLoading(true);
     if (isSignUp) {
-      const { error } = await signUp(email, password, displayName || email.split("@")[0]);
+      const displayName = phoneNumber || email.split("@")[0];
+      const { error } = await signUp(email, password, displayName, phoneNumber);
       if (error) {
         setError(error.message);
       } else {
-        setSuccess("Account created! Check your email to confirm, then log in.");
-        setIsSignUp(false);
+        navigate("/dashboard");
       }
     } else {
       const { error } = await signIn(email, password);
@@ -48,9 +47,7 @@ const Login = () => {
       {/* Logo */}
       <div className="flex justify-center mt-8 mb-10">
         <div className="flex items-center gap-1.5">
-          <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center">
-            <span className="text-primary-foreground font-bold text-sm">O</span>
-          </div>
+          <img src={opayLogo} alt="OPay" className="w-10 h-10" />
           <span className="text-2xl font-bold text-foreground">Pay</span>
         </div>
       </div>
@@ -63,14 +60,14 @@ const Login = () => {
         {isSignUp && (
           <div className="border-2 border-border rounded-lg p-3 mb-4 focus-within:border-primary relative">
             <label className="absolute -top-3 left-3 bg-background px-1 text-muted-foreground text-xs font-medium">
-              Display Name
+              Phone Number
             </label>
             <input
-              type="text"
-              value={displayName}
-              onChange={(e) => setDisplayName(e.target.value)}
+              type="tel"
+              value={phoneNumber}
+              onChange={(e) => setPhoneNumber(e.target.value)}
               className="w-full bg-transparent outline-none text-foreground text-base"
-              placeholder="Bayonle"
+              placeholder="0701 234 5678"
             />
           </div>
         )}
@@ -107,7 +104,6 @@ const Login = () => {
         </div>
 
         {error && <p className="text-destructive text-sm mb-3">{error}</p>}
-        {success && <p className="text-primary text-sm mb-3">{success}</p>}
 
         {!isSignUp && (
           <p className="text-sm text-muted-foreground mb-2">
@@ -126,7 +122,7 @@ const Login = () => {
         </button>
         <p className="text-center mt-4 text-sm text-muted-foreground">
           {isSignUp ? "Already have an account? " : "Don't have an account yet? "}
-          <button onClick={() => { setIsSignUp(!isSignUp); setError(""); setSuccess(""); }} className="text-primary font-medium">
+          <button onClick={() => { setIsSignUp(!isSignUp); setError(""); }} className="text-primary font-medium">
             {isSignUp ? "Log in" : "Create one"}
           </button>
         </p>
