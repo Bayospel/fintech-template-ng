@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Download, ChevronDown, ArrowUpRight, ArrowDownLeft, Gamepad2, FileText, Percent } from "lucide-react";
+import opayLogo from "@/assets/opay-logo.png";
 import { useWallet, Transaction } from "@/context/WalletContext";
 
 const getIconForTx = (tx: Transaction) => {
