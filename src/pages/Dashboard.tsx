@@ -8,7 +8,7 @@ import {
 import BottomNav from "@/components/BottomNav";
 import DashboardHeader from "@/components/DashboardHeader";
 import { useWallet } from "@/context/WalletContext";
-import { useAuth } from "@/context/AuthContext";
+
 
 const quickActions = [
   { icon: Phone, label: "Airtime", badge: "Up to 6%" },
