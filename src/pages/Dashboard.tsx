@@ -28,9 +28,6 @@ const Dashboard = () => {
   const [showAddMoney, setShowAddMoney] = useState(false);
   const [addAmount, setAddAmount] = useState("");
   const [addLoading, setAddLoading] = useState(false);
-  const [showAddMoney, setShowAddMoney] = useState(false);
-  const [addAmount, setAddAmount] = useState("");
-  const [addLoading, setAddLoading] = useState(false);
 
   const handleAddMoney = async () => {
     const amt = parseFloat(addAmount);
