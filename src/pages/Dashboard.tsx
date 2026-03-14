@@ -1,24 +1,23 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
-  Eye, EyeOff, ChevronRight, Send, Building2, ArrowDownLeft,
-  Phone, Wifi, Gamepad2, Tv, Shield, Banknote, Megaphone, MoreHorizontal,
+  Eye, EyeOff, ChevronRight, ArrowDownLeft,
   Plus, X, Gift, Users
 } from "lucide-react";
 import BottomNav from "@/components/BottomNav";
 import DashboardHeader from "@/components/DashboardHeader";
 import { useWallet } from "@/context/WalletContext";
-
+import opayLogo from "@/assets/opay-logo.png";
 
 const quickActions = [
-  { icon: Phone, label: "Airtime", badge: "Up to 6%" },
-  { icon: Wifi, label: "Data", badge: "Up to 6%" },
-  { icon: Gamepad2, label: "Betting" },
-  { icon: Tv, label: "TV" },
-  { icon: Shield, label: "SafeBox" },
-  { icon: Banknote, label: "Loan" },
-  { icon: Megaphone, label: "Invitation" },
-  { icon: MoreHorizontal, label: "More" },
+  { icon: "📱", label: "Airtime", badge: "Up to 6%" },
+  { icon: "📶", label: "Data", badge: "Up to 6%" },
+  { icon: "⚽", label: "Betting" },
+  { icon: "📺", label: "TV" },
+  { icon: "💰", label: "SafeBox" },
+  { icon: "🤲", label: "Loan" },
+  { icon: "📢", label: "Invitation" },
+  { icon: "⋯", label: "More" },
 ];
 
 const Dashboard = () => {
@@ -41,17 +40,14 @@ const Dashboard = () => {
 
   const getIcon = (type: string) => {
     switch (type) {
-      case "interest": return <span className="text-base">%</span>;
-      case "betting": return <Gamepad2 size={16} className="text-primary" />;
       case "add": return <Plus size={16} className="text-primary" />;
-      case "transfer": return <Send size={16} className="text-primary" />;
-      default: return <Send size={14} className="text-muted-foreground" />;
+      case "transfer": return <span className="text-base">↗</span>;
+      default: return <span className="text-sm">💸</span>;
     }
   };
 
   return (
     <div className="min-h-screen bg-secondary pb-20 max-w-md mx-auto relative">
-      {/* Header */}
       <DashboardHeader />
 
       {/* Balance Card */}
@@ -68,7 +64,7 @@ const Dashboard = () => {
                   {showBalance ? <Eye size={15} className="text-primary-foreground/70" /> : <EyeOff size={15} className="text-primary-foreground/70" />}
                 </button>
               </div>
-              <button onClick={() => navigate("/transactions")} className="text-primary-foreground/90 text-sm underline">
+              <button onClick={() => navigate("/transactions")} className="text-primary-foreground/90 text-sm">
                 Transaction History <ChevronRight size={12} className="inline" />
               </button>
             </div>
@@ -84,7 +80,7 @@ const Dashboard = () => {
           </div>
           <div className="bg-primary-foreground/10 px-5 py-2.5 flex items-center justify-between">
             <div className="flex items-center gap-2 text-primary-foreground/90 text-sm">
-              <Building2 size={14} />
+              <span>🏪</span>
               <span>Business Service - Today's Sales: <span className="font-semibold">₦0.00</span></span>
             </div>
             <ChevronRight size={14} className="text-primary-foreground/60" />
@@ -93,61 +89,81 @@ const Dashboard = () => {
       </div>
 
       {/* Recent Transactions */}
-      <div className="px-4 mt-3">
-        <div className="bg-card rounded-2xl p-4">
-          <div className="space-y-4">
-            {transactions.slice(0, 3).map((tx) => (
-              <button
-                key={tx.id}
-                onClick={() => navigate("/receipt", {
-                  state: {
-                    amount: Math.abs(tx.amount),
-                    recipientName: tx.name,
-                    bank: tx.bank || "OPay",
-                    account: tx.account || "—",
-                    remark: tx.remark || "",
-                    reference: tx.reference,
-                    date: tx.date,
-                    isCredit: tx.amount > 0,
-                  },
-                })}
-                className="w-full flex items-center justify-between"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center">
-                    {getIcon(tx.icon)}
+      {transactions.length > 0 && (
+        <div className="px-4 mt-3">
+          <div className="bg-card rounded-2xl p-4">
+            <div className="space-y-4">
+              {transactions.slice(0, 3).map((tx) => (
+                <button
+                  key={tx.id}
+                  onClick={() => navigate("/receipt", {
+                    state: {
+                      amount: Math.abs(tx.amount),
+                      recipientName: tx.name,
+                      bank: tx.bank || "OPay",
+                      account: tx.account || "—",
+                      remark: tx.remark || "",
+                      reference: tx.reference,
+                      date: tx.date,
+                      isCredit: tx.amount > 0,
+                    },
+                  })}
+                  className="w-full flex items-center justify-between"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center">
+                      {getIcon(tx.icon)}
+                    </div>
+                    <div className="text-left">
+                      <p className="text-sm font-medium text-foreground truncate max-w-[160px]">{tx.name}</p>
+                      <p className="text-xs text-muted-foreground">{tx.date}</p>
+                    </div>
                   </div>
-                  <div className="text-left">
-                    <p className="text-sm font-medium text-foreground truncate max-w-[160px]">{tx.name}</p>
-                    <p className="text-xs text-muted-foreground">{tx.date}</p>
+                  <div className="text-right">
+                    <p className={`text-sm font-bold ${tx.amount > 0 ? "text-primary" : "text-foreground"}`}>
+                      {tx.amount > 0 ? "+" : "-"}₦{Math.abs(tx.amount).toLocaleString("en-NG", { minimumFractionDigits: 2 })}
+                    </p>
+                    <span className="text-[10px] text-primary font-medium">{tx.status}</span>
                   </div>
-                </div>
-                <div className="text-right">
-                  <p className={`text-sm font-bold ${tx.amount > 0 ? "text-primary" : "text-foreground"}`}>
-                    {tx.amount > 0 ? "+" : "-"}₦{Math.abs(tx.amount).toLocaleString("en-NG", { minimumFractionDigits: 2 })}
-                  </p>
-                  <span className="text-[10px] text-primary font-medium">{tx.status}</span>
-                </div>
-              </button>
-            ))}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
-      </div>
+      )}
 
       {/* Transfer Shortcuts */}
       <div className="px-4 mt-3">
-        <div className="bg-card rounded-2xl p-4">
+        <div className="bg-card rounded-2xl p-5">
           <div className="grid grid-cols-3 gap-4">
-            <button onClick={() => navigate("/transfer")} className="flex flex-col items-center gap-2">
-              <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center"><Send size={20} className="text-primary" /></div>
+            <button onClick={() => navigate("/transfer")} className="flex flex-col items-center gap-2.5">
+              <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="text-primary">
+                  <rect x="3" y="5" width="12" height="14" rx="2" fill="currentColor" opacity="0.3"/>
+                  <path d="M15 9h2a2 2 0 012 2v6a2 2 0 01-2 2h-2" stroke="currentColor" strokeWidth="1.5"/>
+                  <circle cx="9" cy="11" r="2.5" fill="currentColor"/>
+                  <path d="M6 16.5c0-1.5 1.3-2.5 3-2.5s3 1 3 2.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+                </svg>
+              </div>
               <span className="text-xs font-medium text-foreground">To OPay</span>
             </button>
-            <button onClick={() => navigate("/transfer")} className="flex flex-col items-center gap-2">
-              <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center"><Building2 size={20} className="text-primary" /></div>
+            <button onClick={() => navigate("/transfer")} className="flex flex-col items-center gap-2.5">
+              <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="text-primary">
+                  <rect x="3" y="6" width="18" height="12" rx="2" fill="currentColor" opacity="0.2"/>
+                  <path d="M7 6V4h10v2" stroke="currentColor" strokeWidth="1.5"/>
+                  <line x1="7" y1="10" x2="17" y2="10" stroke="currentColor" strokeWidth="1.5"/>
+                  <line x1="9" y1="6" x2="9" y2="18" stroke="currentColor" strokeWidth="1"/>
+                  <line x1="12" y1="6" x2="12" y2="18" stroke="currentColor" strokeWidth="1"/>
+                  <line x1="15" y1="6" x2="15" y2="18" stroke="currentColor" strokeWidth="1"/>
+                </svg>
+              </div>
               <span className="text-xs font-medium text-foreground">To Bank</span>
             </button>
-            <button className="flex flex-col items-center gap-2">
-              <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center"><ArrowDownLeft size={20} className="text-primary" /></div>
+            <button className="flex flex-col items-center gap-2.5">
+              <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center">
+                <ArrowDownLeft size={22} className="text-primary" />
+              </div>
               <span className="text-xs font-medium text-foreground">Withdraw</span>
             </button>
           </div>
@@ -163,8 +179,10 @@ const Dashboard = () => {
                 {action.badge && (
                   <span className="absolute -top-1.5 left-1/2 -translate-x-1/2 bg-destructive text-destructive-foreground text-[7px] font-bold px-1.5 py-0.5 rounded-full whitespace-nowrap z-10">{action.badge}</span>
                 )}
-                <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center"><action.icon size={20} className="text-primary" /></div>
-                <span className="text-[11px] text-foreground font-medium">{action.label}</span>
+                <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
+                  <span className="text-xl">{action.icon}</span>
+                </div>
+                <span className="text-[11px] text-muted-foreground font-medium">{action.label}</span>
               </button>
             ))}
           </div>
