@@ -1,19 +1,65 @@
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, Loader2, CheckCircle } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 import opayLogo from "@/assets/opay-logo.png";
 
 const Login = () => {
   const navigate = useNavigate();
   const { signIn, signUp } = useAuth();
   const [isSignUp, setIsSignUp] = useState(false);
-  const [username, setUsername] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [pin, setPin] = useState("");
   const [showPin, setShowPin] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+
+  // Paystack verification state (signup only)
+  const [verifiedName, setVerifiedName] = useState("");
+  const [verifying, setVerifying] = useState(false);
+  const [verifyError, setVerifyError] = useState("");
+
+  // Auto-verify OPay account when phone number reaches 10+ digits during signup
+  const resolveOPayAccount = useCallback(async (acctNo: string) => {
+    setVerifying(true);
+    setVerifiedName("");
+    setVerifyError("");
+    try {
+      const { data, error } = await supabase.functions.invoke("resolve-account", {
+        body: { account_number: acctNo, bank_code: "999992" }, // OPay bank code
+      });
+      if (error) {
+        setVerifyError("Could not verify OPay account. Check the number.");
+        return;
+      }
+      if (data?.account_name) {
+        setVerifiedName(data.account_name);
+      } else {
+        setVerifyError(data?.error || "No OPay account found with this number.");
+      }
+    } catch {
+      setVerifyError("Network error. Please try again.");
+    } finally {
+      setVerifying(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!isSignUp) {
+      setVerifiedName("");
+      setVerifyError("");
+      return;
+    }
+    const digits = phoneNumber.replace(/\D/g, "");
+    if (digits.length >= 10) {
+      const timer = setTimeout(() => resolveOPayAccount(digits.slice(0, 10)), 500);
+      return () => clearTimeout(timer);
+    } else {
+      setVerifiedName("");
+      setVerifyError("");
+    }
+  }, [phoneNumber, isSignUp, resolveOPayAccount]);
 
   const handleSubmit = async () => {
     setError("");
@@ -25,14 +71,14 @@ const Login = () => {
       setError("PIN must be 4-6 digits");
       return;
     }
-    if (isSignUp && !username.trim()) {
-      setError("Please enter a username");
+    if (isSignUp && !verifiedName) {
+      setError("Your OPay account must be verified first");
       return;
     }
 
     setLoading(true);
     if (isSignUp) {
-      const { error } = await signUp(phoneNumber, pin, username.trim());
+      const { error } = await signUp(phoneNumber, pin, verifiedName);
       if (error) {
         setError(error.message);
       } else {
@@ -41,11 +87,7 @@ const Login = () => {
     } else {
       const { error } = await signIn(phoneNumber, pin);
       if (error) {
-        if (error.message === "Invalid login credentials") {
-          setError("Wrong phone number or PIN");
-        } else {
-          setError(error.message);
-        }
+        setError(error.message === "Invalid login credentials" ? "Wrong phone number or PIN" : error.message);
       } else {
         navigate("/dashboard");
       }
@@ -73,34 +115,42 @@ const Login = () => {
           {isSignUp ? "Create your account" : "Log in to your account"}
         </h1>
 
-        {isSignUp && (
-          <div className="border-2 border-border rounded-lg p-3 mb-4 focus-within:border-primary relative">
-            <label className="absolute -top-3 left-3 bg-background px-1 text-muted-foreground text-xs font-medium">
-              Username
-            </label>
+        {/* Phone / OPay Account Number */}
+        <div className="border-2 border-border rounded-lg p-3 mb-1 focus-within:border-primary relative">
+          <label className="absolute -top-3 left-3 bg-background px-1 text-muted-foreground text-xs font-medium">
+            {isSignUp ? "OPay Account Number" : "Phone Number"}
+          </label>
+          <div className="flex items-center">
             <input
-              type="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              className="w-full bg-transparent outline-none text-foreground text-base"
-              placeholder="Enter your username"
+              type="tel"
+              value={phoneNumber}
+              onChange={(e) => setPhoneNumber(e.target.value.replace(/[^0-9]/g, ""))}
+              className="flex-1 bg-transparent outline-none text-foreground text-base"
+              placeholder={isSignUp ? "Enter your OPay number" : "0701 234 5678"}
             />
+            {isSignUp && verifying && <Loader2 size={18} className="text-muted-foreground animate-spin" />}
+            {isSignUp && verifiedName && !verifying && <CheckCircle size={18} className="text-primary" />}
+          </div>
+        </div>
+
+        {/* Verification result (signup only) */}
+        {isSignUp && (
+          <div className="mb-4 min-h-[28px]">
+            {verifiedName && (
+              <div className="mt-1.5 px-3 py-2 opay-gradient-light rounded-lg animate-fade-in">
+                <p className="text-sm font-semibold text-primary">{verifiedName}</p>
+                <p className="text-[10px] text-primary/70 mt-0.5">This name will be your display name</p>
+              </div>
+            )}
+            {verifyError && (
+              <p className="text-destructive text-xs mt-1.5 px-1">{verifyError}</p>
+            )}
           </div>
         )}
 
-        <div className="border-2 border-border rounded-lg p-3 mb-4 focus-within:border-primary relative">
-          <label className="absolute -top-3 left-3 bg-background px-1 text-muted-foreground text-xs font-medium">
-            Phone Number
-          </label>
-          <input
-            type="tel"
-            value={phoneNumber}
-            onChange={(e) => setPhoneNumber(e.target.value.replace(/[^0-9]/g, ""))}
-            className="w-full bg-transparent outline-none text-foreground text-base"
-            placeholder="0701 234 5678"
-          />
-        </div>
+        {!isSignUp && <div className="mb-4" />}
 
+        {/* PIN */}
         <div className="border-2 border-border rounded-lg p-3 mb-3 focus-within:border-primary relative">
           <label className="absolute -top-3 left-3 bg-background px-1 text-muted-foreground text-xs font-medium">
             PIN
@@ -118,7 +168,9 @@ const Login = () => {
               {showPin ? <EyeOff size={18} /> : <Eye size={18} />}
             </button>
           </div>
-          <p className="text-[10px] text-muted-foreground mt-1">4-6 digit PIN</p>
+          <p className="text-[10px] text-muted-foreground mt-1">
+            {isSignUp ? "Create a 4-6 digit PIN" : "4-6 digit PIN"}
+          </p>
         </div>
 
         {error && <p className="text-destructive text-sm mb-3">{error}</p>}
@@ -127,14 +179,14 @@ const Login = () => {
       <div className="px-6 pb-8">
         <button
           onClick={handleSubmit}
-          disabled={!phoneNumber || !pin || loading || (isSignUp && !username)}
+          disabled={!phoneNumber || !pin || loading || (isSignUp && !verifiedName)}
           className="w-full py-4 rounded-full opay-gradient text-primary-foreground font-semibold text-base disabled:opacity-40 transition-opacity"
         >
           {loading ? "Please wait..." : isSignUp ? "CREATE ACCOUNT" : "LOG IN"}
         </button>
         <p className="text-center mt-4 text-sm text-muted-foreground">
           {isSignUp ? "Already have an account? " : "Don't have an account yet? "}
-          <button onClick={() => { setIsSignUp(!isSignUp); setError(""); }} className="text-primary font-medium">
+          <button onClick={() => { setIsSignUp(!isSignUp); setError(""); setVerifiedName(""); setVerifyError(""); }} className="text-primary font-medium">
             {isSignUp ? "Log in" : "Create one"}
           </button>
         </p>
