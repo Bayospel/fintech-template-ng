@@ -58,34 +58,36 @@ const Dashboard = () => {
           <div className="px-5 pt-4 pb-3">
             <div className="flex items-center justify-between mb-0.5">
               <div className="flex items-center gap-2">
-                <span className="text-primary-foreground/90 text-sm font-medium flex items-center gap-1.5">
-                  <span className="w-4 h-4 rounded-full bg-primary-foreground/30 flex items-center justify-center text-[8px]">✓</span>
+                <span className="text-primary-foreground text-sm font-medium flex items-center gap-1.5">
+                  <span className="w-5 h-5 rounded-full bg-primary-foreground/30 flex items-center justify-center text-[10px]">🛡️</span>
                   Available Balance
                 </span>
                 <button onClick={() => setShowBalance(!showBalance)}>
-                  {showBalance ? <Eye size={15} className="text-primary-foreground/70" /> : <EyeOff size={15} className="text-primary-foreground/70" />}
+                  {showBalance ? <Eye size={16} className="text-primary-foreground" /> : <EyeOff size={16} className="text-primary-foreground" />}
                 </button>
               </div>
-              <button onClick={() => navigate("/transactions")} className="text-primary-foreground/90 text-sm">
-                Transaction History <ChevronRight size={12} className="inline" />
+              <button onClick={() => navigate("/transactions")} className="text-primary-foreground text-sm underline underline-offset-2 flex items-center gap-0.5">
+                Transaction History <ChevronRight size={13} className="inline" />
               </button>
             </div>
-            <div className="flex items-center justify-between mt-1">
-              <p className="text-3xl font-extrabold text-primary-foreground tracking-tight">
+            <div className="flex items-center justify-between mt-2">
+              <p className="text-[28px] font-extrabold text-primary-foreground tracking-tight">
                 {showBalance ? `₦${balance.toLocaleString("en-NG", { minimumFractionDigits: 2 })}` : "₦****"}
                 <ChevronRight size={16} className="inline ml-0.5 opacity-60" />
               </p>
-              <button onClick={() => setShowAddMoney(true)} className="bg-card text-foreground text-sm font-semibold px-4 py-2 rounded-full">
+              <button onClick={() => setShowAddMoney(true)} className="bg-card text-primary text-sm font-semibold px-5 py-2 rounded-full border border-primary/20">
                 + Add Money
               </button>
             </div>
           </div>
           <div className="bg-primary-foreground/10 px-5 py-2.5 flex items-center justify-between">
-            <div className="flex items-center gap-2 text-primary-foreground/90 text-sm">
+            <div className="flex items-center gap-2 text-primary-foreground text-sm">
               <span>🏪</span>
-              <span>Business Service - Today's Sales: <span className="font-semibold">₦0.00</span></span>
+              <span>Business Service - Today's Sales: <span className="font-bold text-primary-foreground">₦0.00</span></span>
             </div>
-            <ChevronRight size={14} className="text-primary-foreground/60" />
+            <div className="w-6 h-6 rounded-full bg-primary-foreground/20 flex items-center justify-center">
+              <ChevronRight size={14} className="text-primary-foreground" />
+            </div>
           </div>
         </div>
       </div>
