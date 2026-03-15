@@ -136,58 +136,20 @@ const Dashboard = () => {
 
       {/* Transfer Shortcuts */}
       <div className="px-4 mt-3">
-        <div className="bg-card rounded-2xl p-5">
-          <div className="grid grid-cols-3 gap-4">
-            <button onClick={() => navigate("/transfer")} className="flex flex-col items-center gap-2.5">
-              <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="text-primary">
-                  <rect x="3" y="5" width="12" height="14" rx="2" fill="currentColor" opacity="0.3"/>
-                  <path d="M15 9h2a2 2 0 012 2v6a2 2 0 01-2 2h-2" stroke="currentColor" strokeWidth="1.5"/>
-                  <circle cx="9" cy="11" r="2.5" fill="currentColor"/>
-                  <path d="M6 16.5c0-1.5 1.3-2.5 3-2.5s3 1 3 2.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-                </svg>
-              </div>
-              <span className="text-xs font-medium text-foreground">To OPay</span>
-            </button>
-            <button onClick={() => navigate("/transfer")} className="flex flex-col items-center gap-2.5">
-              <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="text-primary">
-                  <rect x="3" y="6" width="18" height="12" rx="2" fill="currentColor" opacity="0.2"/>
-                  <path d="M7 6V4h10v2" stroke="currentColor" strokeWidth="1.5"/>
-                  <line x1="7" y1="10" x2="17" y2="10" stroke="currentColor" strokeWidth="1.5"/>
-                  <line x1="9" y1="6" x2="9" y2="18" stroke="currentColor" strokeWidth="1"/>
-                  <line x1="12" y1="6" x2="12" y2="18" stroke="currentColor" strokeWidth="1"/>
-                  <line x1="15" y1="6" x2="15" y2="18" stroke="currentColor" strokeWidth="1"/>
-                </svg>
-              </div>
-              <span className="text-xs font-medium text-foreground">To Bank</span>
-            </button>
-            <button className="flex flex-col items-center gap-2.5">
-              <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center">
-                <ArrowDownLeft size={22} className="text-primary" />
-              </div>
-              <span className="text-xs font-medium text-foreground">Withdraw</span>
-            </button>
+        <div className="bg-card rounded-2xl overflow-hidden relative">
+          <img src={transferShortcutsImg} alt="Transfer shortcuts" className="w-full" />
+          <div className="absolute inset-0 grid grid-cols-3">
+            <button onClick={() => navigate("/transfer")} className="w-full h-full" aria-label="To OPay" />
+            <button onClick={() => navigate("/transfer")} className="w-full h-full" aria-label="To Bank" />
+            <button className="w-full h-full" aria-label="Withdraw" />
           </div>
         </div>
       </div>
 
       {/* Quick Actions */}
       <div className="px-4 mt-3">
-        <div className="bg-card rounded-2xl p-4">
-          <div className="grid grid-cols-4 gap-y-5 gap-x-2">
-            {quickActions.map((action) => (
-              <button key={action.label} className="flex flex-col items-center gap-1.5 relative">
-                {action.badge && (
-                  <span className="absolute -top-1.5 left-1/2 -translate-x-1/2 bg-destructive text-destructive-foreground text-[7px] font-bold px-1.5 py-0.5 rounded-full whitespace-nowrap z-10">{action.badge}</span>
-                )}
-                <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
-                  <span className="text-xl">{action.icon}</span>
-                </div>
-                <span className="text-[11px] text-muted-foreground font-medium">{action.label}</span>
-              </button>
-            ))}
-          </div>
+        <div className="bg-card rounded-2xl overflow-hidden">
+          <img src={quickActionsImg} alt="Quick actions" className="w-full" />
         </div>
       </div>
 
