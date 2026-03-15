@@ -54,46 +54,33 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen bg-secondary pb-20 max-w-md mx-auto relative">
-      <DashboardHeader />
+      {/* Header + Balance Card as image with dynamic overlays */}
+      <div className="relative">
+        <img src={balanceCardImg} alt="Dashboard header" className="w-full" />
+        
+        {/* Dynamic name overlay - positioned over "Hi, Bayonle" */}
+        <div className="absolute top-[12%] left-[22%] right-[40%]">
+          <span className="text-foreground font-semibold text-base bg-card px-1">Hi, {displayName}</span>
+        </div>
 
-      {/* Balance Card */}
-      <div className="px-4 mt-2">
-        <div className="balance-card-gradient rounded-2xl overflow-hidden">
-          <div className="px-5 pt-4 pb-3">
-            <div className="flex items-center justify-between mb-0.5">
-              <div className="flex items-center gap-2">
-                <span className="text-primary-foreground text-sm font-medium flex items-center gap-1.5">
-                  <span className="w-5 h-5 rounded-full bg-primary-foreground/30 flex items-center justify-center text-[10px]">🛡️</span>
-                  Available Balance
-                </span>
-                <button onClick={() => setShowBalance(!showBalance)}>
-                  {showBalance ? <Eye size={16} className="text-primary-foreground" /> : <EyeOff size={16} className="text-primary-foreground" />}
-                </button>
-              </div>
-              <button onClick={() => navigate("/transactions")} className="text-primary-foreground text-sm underline underline-offset-2 flex items-center gap-0.5">
-                Transaction History <ChevronRight size={13} className="inline" />
-              </button>
-            </div>
-            <div className="flex items-center justify-between mt-2">
-              <p className="text-[28px] font-extrabold text-primary-foreground tracking-tight">
-                {showBalance ? `₦${balance.toLocaleString("en-NG", { minimumFractionDigits: 2 })}` : "₦****"}
-                <ChevronRight size={16} className="inline ml-0.5 opacity-60" />
-              </p>
-              <button onClick={() => setShowAddMoney(true)} className="bg-card text-primary text-sm font-semibold px-5 py-2 rounded-full border border-primary/20">
-                + Add Money
-              </button>
-            </div>
-          </div>
-          <div className="bg-primary-foreground/10 px-5 py-2.5 flex items-center justify-between">
-            <div className="flex items-center gap-2 text-primary-foreground text-sm">
-              <span>🏪</span>
-              <span>Business Service - Today's Sales: <span className="font-bold text-primary-foreground">₦0.00</span></span>
-            </div>
-            <div className="w-6 h-6 rounded-full bg-primary-foreground/20 flex items-center justify-center">
-              <ChevronRight size={14} className="text-primary-foreground" />
-            </div>
+        {/* Dynamic balance overlay - positioned over "₦9.75" */}
+        <div className="absolute top-[62%] left-[5%] w-[45%]">
+          <div className="bg-primary rounded-sm px-1">
+            <p className="text-[22px] font-extrabold text-primary-foreground tracking-tight leading-tight">
+              {showBalance ? `₦${balance.toLocaleString("en-NG", { minimumFractionDigits: 2 })}` : "₦****"}
+              <ChevronRight size={14} className="inline ml-0.5 opacity-60" />
+            </p>
           </div>
         </div>
+
+        {/* Eye toggle overlay */}
+        <button onClick={() => setShowBalance(!showBalance)} className="absolute top-[46%] left-[40%] w-[8%] h-[8%]" aria-label="Toggle balance" />
+
+        {/* Transaction History clickable overlay */}
+        <button onClick={() => navigate("/transactions")} className="absolute top-[44%] right-[2%] w-[40%] h-[10%]" aria-label="Transaction History" />
+
+        {/* Add Money clickable overlay */}
+        <button onClick={() => setShowAddMoney(true)} className="absolute top-[58%] right-[3%] w-[30%] h-[14%]" aria-label="Add Money" />
       </div>
 
       {/* Recent Transactions */}
