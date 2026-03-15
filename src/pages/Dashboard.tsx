@@ -58,29 +58,27 @@ const Dashboard = () => {
       <div className="relative">
         <img src={balanceCardImg} alt="Dashboard header" className="w-full" />
         
-        {/* Dynamic name overlay - positioned over "Hi, Bayonle" */}
-        <div className="absolute top-[12%] left-[22%] right-[40%]">
-          <span className="text-foreground font-semibold text-base bg-card px-1">Hi, {displayName}</span>
+        {/* Name overlay - exact match over "Hi, Bayonle" */}
+        <div className="absolute top-[10%] left-[21%] flex items-center" style={{ height: '8%' }}>
+          <span className="text-foreground font-semibold text-[16px] leading-none bg-card" style={{ fontFamily: 'Inter, system-ui, sans-serif', letterSpacing: '-0.01em' }}>Hi, {displayName}</span>
         </div>
 
-        {/* Dynamic balance overlay - positioned over "₦9.75" */}
-        <div className="absolute top-[62%] left-[5%] w-[45%]">
-          <div className="bg-primary rounded-sm px-1">
-            <p className="text-[22px] font-extrabold text-primary-foreground tracking-tight leading-tight">
-              {showBalance ? `₦${balance.toLocaleString("en-NG", { minimumFractionDigits: 2 })}` : "₦****"}
-              <ChevronRight size={14} className="inline ml-0.5 opacity-60" />
-            </p>
-          </div>
+        {/* Balance overlay - exact match over "₦9.75 >" */}
+        <div className="absolute top-[60%] left-[5%] flex items-center" style={{ height: '12%' }}>
+          <span className="text-primary-foreground font-extrabold text-[28px] leading-none bg-primary px-1" style={{ fontFamily: 'Inter, system-ui, sans-serif', letterSpacing: '-0.02em' }}>
+            {showBalance ? `₦${balance.toLocaleString("en-NG", { minimumFractionDigits: 2 })}` : "₦****"}
+          </span>
+          <ChevronRight size={18} className="text-primary-foreground/60 -ml-0.5 bg-primary" />
         </div>
 
         {/* Eye toggle overlay */}
-        <button onClick={() => setShowBalance(!showBalance)} className="absolute top-[46%] left-[40%] w-[8%] h-[8%]" aria-label="Toggle balance" />
+        <button onClick={() => setShowBalance(!showBalance)} className="absolute top-[44%] left-[38%] w-[10%] h-[10%]" aria-label="Toggle balance" />
 
         {/* Transaction History clickable overlay */}
-        <button onClick={() => navigate("/transactions")} className="absolute top-[44%] right-[2%] w-[40%] h-[10%]" aria-label="Transaction History" />
+        <button onClick={() => navigate("/transactions")} className="absolute top-[42%] right-[2%] w-[42%] h-[10%]" aria-label="Transaction History" />
 
         {/* Add Money clickable overlay */}
-        <button onClick={() => setShowAddMoney(true)} className="absolute top-[58%] right-[3%] w-[30%] h-[14%]" aria-label="Add Money" />
+        <button onClick={() => setShowAddMoney(true)} className="absolute top-[57%] right-[2%] w-[32%] h-[15%]" aria-label="Add Money" />
       </div>
 
       {/* Recent Transactions */}
