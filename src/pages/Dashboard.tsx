@@ -8,6 +8,8 @@ import BottomNav from "@/components/BottomNav";
 import DashboardHeader from "@/components/DashboardHeader";
 import { useWallet } from "@/context/WalletContext";
 import opayLogo from "@/assets/opay-logo.png";
+import transferShortcutsImg from "@/assets/transfer-shortcuts.jpg";
+import quickActionsImg from "@/assets/quick-actions.jpg";
 
 const quickActions = [
   { icon: "📱", label: "Airtime", badge: "Up to 6%" },
