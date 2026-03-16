@@ -206,6 +206,76 @@ const Profile = () => {
         </button>
       </div>
 
+      {/* PIN Setup Sheet */}
+      {showPinSetup && (
+        <div className="fixed inset-0 z-50 flex items-end justify-center bg-foreground/50">
+          <div className="bg-card w-full max-w-md rounded-t-3xl pt-6 pb-4">
+            <div className="flex items-center justify-between px-5 mb-6">
+              <span className="text-lg font-bold text-foreground italic">
+                {pinStep === "enter" ? (hasPin ? "Change Payment PIN" : "Set Payment PIN") : "Confirm PIN"}
+              </span>
+              <button onClick={() => { setShowPinSetup(false); setNewPin(""); setConfirmPin(""); setPinStep("enter"); }}>
+                <X size={22} className="text-muted-foreground" />
+              </button>
+            </div>
+
+            <div className="flex justify-center gap-4 mb-3">
+              {[0, 1, 2, 3].map((i) => {
+                const currentPin = pinStep === "enter" ? newPin : confirmPin;
+                return (
+                  <div
+                    key={i}
+                    className={`w-14 h-14 rounded-xl border-2 flex items-center justify-center text-2xl font-bold ${
+                      currentPin.length > i
+                        ? "border-primary bg-primary/5 text-foreground"
+                        : "border-border bg-muted text-transparent"
+                    }`}
+                  >
+                    {currentPin.length > i ? "●" : ""}
+                  </div>
+                );
+              })}
+            </div>
+            <p className="text-center text-muted-foreground text-sm italic mb-4">
+              {pinStep === "enter" ? "Enter a 4-digit PIN" : "Re-enter PIN to confirm"}
+            </p>
+
+            {pinStep === "enter" && newPin.length === 4 && (
+              <div className="px-5 mb-4">
+                <button onClick={handleNextPin} className="w-full py-3 rounded-full opay-gradient text-primary-foreground font-semibold text-sm">
+                  Next
+                </button>
+              </div>
+            )}
+
+            <div className="grid grid-cols-3 border-t border-border">
+              {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((n) => (
+                <button
+                  key={n}
+                  onClick={() => handlePinDigit(n.toString())}
+                  className="py-5 text-center text-2xl font-bold text-foreground border-b border-r border-border active:bg-muted transition-colors italic"
+                >
+                  {n}
+                </button>
+              ))}
+              <div className="py-5" />
+              <button
+                onClick={() => handlePinDigit("0")}
+                className="py-5 text-center text-2xl font-bold text-foreground border-b border-r border-border active:bg-muted transition-colors italic"
+              >
+                0
+              </button>
+              <button
+                onClick={handlePinDelete}
+                className="py-5 flex items-center justify-center border-b border-border active:bg-muted transition-colors"
+              >
+                <Delete size={24} className="text-foreground" />
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <BottomNav />
     </div>
   );
