@@ -9,7 +9,7 @@ import DashboardHeader from "@/components/DashboardHeader";
 import { useWallet } from "@/context/WalletContext";
 import { useAuth } from "@/context/AuthContext";
 import opayLogo from "@/assets/opay-logo.png";
-import balanceCardImg from "@/assets/balance-card.jpg";
+
 import transferShortcutsImg from "@/assets/transfer-shortcuts.jpg";
 import quickActionsImg from "@/assets/quick-actions.jpg";
 
@@ -54,31 +54,60 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen bg-secondary pb-20 max-w-md mx-auto relative">
-      {/* Header + Balance Card as image with dynamic overlays */}
-      <div className="relative">
-        <img src={balanceCardImg} alt="Dashboard header" className="w-full" />
-        
-        {/* Name overlay - exact match over "Hi, Bayonle" */}
-        <div className="absolute top-[10%] left-[21%] flex items-center" style={{ height: '8%' }}>
-          <span className="text-foreground font-semibold text-[16px] leading-none bg-card" style={{ fontFamily: 'Inter, system-ui, sans-serif', letterSpacing: '-0.01em' }}>Hi, {displayName}</span>
+      {/* Header */}
+      <DashboardHeader />
+
+      {/* Balance Card */}
+      <div className="px-4 mt-1">
+        <div className="bg-primary rounded-3xl p-5 relative overflow-hidden">
+          {/* Decorative green circles */}
+          <div className="absolute top-[-20%] left-[15%] w-[45%] h-[140%] rounded-full bg-primary-foreground/8" />
+          <div className="absolute top-[10%] left-[30%] w-[35%] h-[120%] rounded-full bg-primary-foreground/5" />
+
+          {/* Top row */}
+          <div className="flex items-center justify-between relative z-10">
+            <div className="flex items-center gap-2">
+              <span className="text-primary-foreground/90 text-sm">🛡️</span>
+              <span className="text-primary-foreground font-semibold text-[13px]" style={{ fontFamily: 'Inter, system-ui, sans-serif' }}>Available Balance</span>
+              <button onClick={() => setShowBalance(!showBalance)} aria-label="Toggle balance">
+                {showBalance ? <Eye size={16} className="text-primary-foreground/70" /> : <EyeOff size={16} className="text-primary-foreground/70" />}
+              </button>
+            </div>
+            <button onClick={() => navigate("/transactions")} className="flex items-center gap-1">
+              <span className="text-primary-foreground/90 text-[12px] italic underline" style={{ fontFamily: 'Inter, system-ui, sans-serif' }}>Transaction History</span>
+              <ChevronRight size={14} className="text-primary-foreground/70" />
+            </button>
+          </div>
+
+          {/* Balance + Add Money row */}
+          <div className="flex items-center justify-between mt-4 relative z-10">
+            <span className="text-primary-foreground font-extrabold text-[22px] leading-none" style={{ fontFamily: 'Inter, system-ui, sans-serif', letterSpacing: '-0.02em' }}>
+              {showBalance ? `₦${balance.toLocaleString("en-NG", { minimumFractionDigits: 2 })}` : "₦****"}
+            </span>
+            <button
+              onClick={() => setShowAddMoney(true)}
+              className="bg-card text-primary font-bold text-[13px] px-5 py-2.5 rounded-full shadow-sm"
+              style={{ fontFamily: 'Inter, system-ui, sans-serif' }}
+            >
+              + Add Money
+            </button>
+          </div>
         </div>
+      </div>
 
-        {/* Balance overlay - exact match over "₦9.75 >" */}
-        <div className="absolute top-[60%] left-[5%] flex items-center" style={{ height: '12%' }}>
-          <span className="text-primary-foreground font-extrabold text-[28px] leading-none bg-primary px-1" style={{ fontFamily: 'Inter, system-ui, sans-serif', letterSpacing: '-0.02em' }}>
-            {showBalance ? `₦${balance.toLocaleString("en-NG", { minimumFractionDigits: 2 })}` : "₦****"}
-          </span>
-          <ChevronRight size={18} className="text-primary-foreground/60 -ml-0.5 bg-primary" />
+      {/* Business Service Bar */}
+      <div className="px-4 mt-2">
+        <div className="bg-gradient-to-r from-primary/5 to-primary/10 rounded-2xl px-4 py-3 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <span className="text-primary text-base">🏪</span>
+            <span className="text-foreground text-[13px]" style={{ fontFamily: 'Inter, system-ui, sans-serif' }}>
+              Business Service - Today's Sales: <span className="text-primary font-bold">₦46,000.00</span>
+            </span>
+          </div>
+          <div className="w-6 h-6 rounded-full bg-border flex items-center justify-center">
+            <ChevronRight size={14} className="text-muted-foreground" />
+          </div>
         </div>
-
-        {/* Eye toggle overlay */}
-        <button onClick={() => setShowBalance(!showBalance)} className="absolute top-[44%] left-[38%] w-[10%] h-[10%]" aria-label="Toggle balance" />
-
-        {/* Transaction History clickable overlay */}
-        <button onClick={() => navigate("/transactions")} className="absolute top-[42%] right-[2%] w-[42%] h-[10%]" aria-label="Transaction History" />
-
-        {/* Add Money clickable overlay */}
-        <button onClick={() => setShowAddMoney(true)} className="absolute top-[57%] right-[2%] w-[32%] h-[15%]" aria-label="Add Money" />
       </div>
 
       {/* Recent Transactions */}
