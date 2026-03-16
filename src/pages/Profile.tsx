@@ -1,9 +1,11 @@
 import { useNavigate } from "react-router-dom";
 import { Eye, EyeOff, Settings, ChevronRight, Shield, MessageCircle, Megaphone,
-  FileText, Gauge, CreditCard, Briefcase, Users, LogOut } from "lucide-react";
-import { useState } from "react";
+  FileText, Gauge, CreditCard, Briefcase, Users, LogOut, Lock, X, Delete } from "lucide-react";
+import { useState, useEffect } from "react";
 import { useWallet } from "@/context/WalletContext";
 import { useAuth } from "@/context/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 import BottomNav from "@/components/BottomNav";
 
 const menuItems = [
