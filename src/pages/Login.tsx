@@ -192,6 +192,15 @@ const Login = () => {
             {isSignUp ? "Log in" : "Create one"}
           </button>
         </p>
+
+        {isInstallable && (
+          <button
+            onClick={install}
+            className="w-full mt-4 py-3 rounded-full border-2 border-primary text-primary font-semibold text-sm flex items-center justify-center gap-2 transition-colors hover:bg-primary/5"
+          >
+            <Download size={16} /> Install App
+          </button>
+        )}
       </div>
     </div>
   );
