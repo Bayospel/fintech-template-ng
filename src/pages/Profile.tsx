@@ -7,7 +7,7 @@ import { useAuth } from "@/context/AuthContext";
 import BottomNav from "@/components/BottomNav";
 
 const menuItems = [
-  { icon: FileText, label: "Transaction History", desc: "", path: "" },
+  { icon: FileText, label: "Transaction History", desc: "", path: "/transactions" },
   { icon: Gauge, label: "Account Limits", desc: "View your transaction limits" },
   { icon: CreditCard, label: "Bank Card/Account", desc: "1 linked card/account" },
   { icon: Briefcase, label: "My BizPayment", desc: "Receive payment for business", badge: "Fast TFR" },
