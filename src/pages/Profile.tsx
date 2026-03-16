@@ -30,6 +30,67 @@ const Profile = () => {
   const displayName = profile?.display_name || "User";
   const tier = profile?.tier || 1;
   const [showBalance, setShowBalance] = useState(true);
+  const [showPinSetup, setShowPinSetup] = useState(false);
+  const [newPin, setNewPin] = useState("");
+  const [confirmPin, setConfirmPin] = useState("");
+  const [pinStep, setPinStep] = useState<"enter" | "confirm">("enter");
+  const [hasPin, setHasPin] = useState(false);
+
+  useEffect(() => {
+    const checkPin = async () => {
+      if (!user) return;
+      const { data } = await supabase
+        .from("profiles")
+        .select("payment_pin")
+        .eq("user_id", user.id)
+        .single();
+      if (data && (data as any).payment_pin) setHasPin(true);
+    };
+    checkPin();
+  }, [user]);
+
+  const handlePinDigit = (digit: string) => {
+    if (pinStep === "enter") {
+      if (newPin.length < 4) setNewPin(newPin + digit);
+    } else {
+      if (confirmPin.length < 4) {
+        const next = confirmPin + digit;
+        setConfirmPin(next);
+        if (next.length === 4) {
+          if (next === newPin) {
+            savePin(next);
+          } else {
+            toast.error("PINs don't match. Try again.");
+            setNewPin("");
+            setConfirmPin("");
+            setPinStep("enter");
+          }
+        }
+      }
+    }
+  };
+
+  const handlePinDelete = () => {
+    if (pinStep === "enter") setNewPin(newPin.slice(0, -1));
+    else setConfirmPin(confirmPin.slice(0, -1));
+  };
+
+  const savePin = async (pinValue: string) => {
+    if (!user) return;
+    await supabase.from("profiles").update({ payment_pin: pinValue } as any).eq("user_id", user.id);
+    setHasPin(true);
+    setShowPinSetup(false);
+    setNewPin("");
+    setConfirmPin("");
+    setPinStep("enter");
+    toast.success("Payment PIN set successfully!");
+  };
+
+  const handleNextPin = () => {
+    if (newPin.length === 4) setPinStep("confirm");
+  };
+
+  const { user } = useAuth();
 
   return (
     <div className="min-h-screen bg-secondary pb-20 max-w-md mx-auto">
