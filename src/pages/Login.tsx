@@ -9,6 +9,7 @@ import opayLogo from "@/assets/opay-logo.png";
 const Login = () => {
   const navigate = useNavigate();
   const { signIn, signUp } = useAuth();
+  const { isInstallable, install } = usePWAInstall();
   const [isSignUp, setIsSignUp] = useState(false);
   const [phoneNumber, setPhoneNumber] = useState("");
   const [pin, setPin] = useState("");
