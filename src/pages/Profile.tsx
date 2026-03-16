@@ -7,7 +7,7 @@ import { useAuth } from "@/context/AuthContext";
 import BottomNav from "@/components/BottomNav";
 
 const menuItems = [
-  { icon: FileText, label: "Transaction History", desc: "", path: "" },
+  { icon: FileText, label: "Transaction History", desc: "", path: "/transactions" },
   { icon: Gauge, label: "Account Limits", desc: "View your transaction limits" },
   { icon: CreditCard, label: "Bank Card/Account", desc: "1 linked card/account" },
   { icon: Briefcase, label: "My BizPayment", desc: "Receive payment for business", badge: "Fast TFR" },
@@ -88,7 +88,7 @@ const Profile = () => {
       <div className="px-4 mt-3">
         <div className="bg-card rounded-2xl overflow-hidden">
           {menuItems.map((item, i) => (
-            <button key={i} className="w-full flex items-center gap-3 px-4 py-4 border-b border-border last:border-b-0">
+            <button key={i} onClick={() => item.path && navigate(item.path)} className="w-full flex items-center gap-3 px-4 py-4 border-b border-border last:border-b-0">
               <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
                 <item.icon size={18} className="text-primary" />
               </div>

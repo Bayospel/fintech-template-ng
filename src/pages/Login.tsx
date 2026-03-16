@@ -1,13 +1,15 @@
 import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
-import { Eye, EyeOff, Loader2, CheckCircle } from "lucide-react";
+import { Eye, EyeOff, Loader2, CheckCircle, Download } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { usePWAInstall } from "@/hooks/usePWAInstall";
 import opayLogo from "@/assets/opay-logo.png";
 
 const Login = () => {
   const navigate = useNavigate();
   const { signIn, signUp } = useAuth();
+  const { isInstallable, install } = usePWAInstall();
   const [isSignUp, setIsSignUp] = useState(false);
   const [phoneNumber, setPhoneNumber] = useState("");
   const [pin, setPin] = useState("");
@@ -190,6 +192,15 @@ const Login = () => {
             {isSignUp ? "Log in" : "Create one"}
           </button>
         </p>
+
+        {isInstallable && (
+          <button
+            onClick={install}
+            className="w-full mt-4 py-3 rounded-full border-2 border-primary text-primary font-semibold text-sm flex items-center justify-center gap-2 transition-colors hover:bg-primary/5"
+          >
+            <Download size={16} /> Install App
+          </button>
+        )}
       </div>
     </div>
   );
