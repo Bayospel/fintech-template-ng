@@ -9,7 +9,7 @@ import DashboardHeader from "@/components/DashboardHeader";
 import { useWallet } from "@/context/WalletContext";
 import { useAuth } from "@/context/AuthContext";
 import opayLogo from "@/assets/opay-logo.png";
-import balanceCardImg from "@/assets/balance-card.jpg";
+
 import transferShortcutsImg from "@/assets/transfer-shortcuts.jpg";
 import quickActionsImg from "@/assets/quick-actions.jpg";
 
