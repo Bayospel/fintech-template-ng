@@ -20,6 +20,7 @@ export type Database = {
           created_at: string
           display_name: string
           id: string
+          payment_pin: string | null
           phone_number: string | null
           tier: number
           updated_at: string
@@ -30,6 +31,7 @@ export type Database = {
           created_at?: string
           display_name?: string
           id?: string
+          payment_pin?: string | null
           phone_number?: string | null
           tier?: number
           updated_at?: string
@@ -40,6 +42,7 @@ export type Database = {
           created_at?: string
           display_name?: string
           id?: string
+          payment_pin?: string | null
           phone_number?: string | null
           tier?: number
           updated_at?: string
