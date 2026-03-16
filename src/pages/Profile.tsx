@@ -1,9 +1,11 @@
 import { useNavigate } from "react-router-dom";
 import { Eye, EyeOff, Settings, ChevronRight, Shield, MessageCircle, Megaphone,
-  FileText, Gauge, CreditCard, Briefcase, Users, LogOut } from "lucide-react";
-import { useState } from "react";
+  FileText, Gauge, CreditCard, Briefcase, Users, LogOut, Lock, X, Delete } from "lucide-react";
+import { useState, useEffect } from "react";
 import { useWallet } from "@/context/WalletContext";
 import { useAuth } from "@/context/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 import BottomNav from "@/components/BottomNav";
 
 const menuItems = [
@@ -15,6 +17,7 @@ const menuItems = [
 ];
 
 const bottomMenuItems = [
+  { icon: Lock, label: "Payment PIN", desc: "Set or change your payment PIN", action: "pin" },
   { icon: Shield, label: "Security Center", desc: "Protect your funds" },
   { icon: MessageCircle, label: "Customer Service Center", desc: "" },
   { icon: Megaphone, label: "Invitation", desc: "Invite friends and earn up to ₦6,300 Bonus" },
@@ -23,10 +26,69 @@ const bottomMenuItems = [
 const Profile = () => {
   const navigate = useNavigate();
   const { balance } = useWallet();
-  const { profile, signOut } = useAuth();
+  const { profile, signOut, user } = useAuth();
   const displayName = profile?.display_name || "User";
   const tier = profile?.tier || 1;
   const [showBalance, setShowBalance] = useState(true);
+  const [showPinSetup, setShowPinSetup] = useState(false);
+  const [newPin, setNewPin] = useState("");
+  const [confirmPin, setConfirmPin] = useState("");
+  const [pinStep, setPinStep] = useState<"enter" | "confirm">("enter");
+  const [hasPin, setHasPin] = useState(false);
+
+  useEffect(() => {
+    const checkPin = async () => {
+      if (!user) return;
+      const { data } = await supabase
+        .from("profiles")
+        .select("payment_pin")
+        .eq("user_id", user.id)
+        .single();
+      if (data && (data as any).payment_pin) setHasPin(true);
+    };
+    checkPin();
+  }, [user]);
+
+  const handlePinDigit = (digit: string) => {
+    if (pinStep === "enter") {
+      if (newPin.length < 4) setNewPin(newPin + digit);
+    } else {
+      if (confirmPin.length < 4) {
+        const next = confirmPin + digit;
+        setConfirmPin(next);
+        if (next.length === 4) {
+          if (next === newPin) {
+            savePin(next);
+          } else {
+            toast.error("PINs don't match. Try again.");
+            setNewPin("");
+            setConfirmPin("");
+            setPinStep("enter");
+          }
+        }
+      }
+    }
+  };
+
+  const handlePinDelete = () => {
+    if (pinStep === "enter") setNewPin(newPin.slice(0, -1));
+    else setConfirmPin(confirmPin.slice(0, -1));
+  };
+
+  const savePin = async (pinValue: string) => {
+    if (!user) return;
+    await supabase.from("profiles").update({ payment_pin: pinValue } as any).eq("user_id", user.id);
+    setHasPin(true);
+    setShowPinSetup(false);
+    setNewPin("");
+    setConfirmPin("");
+    setPinStep("enter");
+    toast.success("Payment PIN set successfully!");
+  };
+
+  const handleNextPin = () => {
+    if (newPin.length === 4) setPinStep("confirm");
+  };
 
   return (
     <div className="min-h-screen bg-secondary pb-20 max-w-md mx-auto">
@@ -115,12 +177,17 @@ const Profile = () => {
       <div className="px-4 mt-3 mb-4">
         <div className="bg-card rounded-2xl overflow-hidden">
           {bottomMenuItems.map((item, i) => (
-            <button key={i} className="w-full flex items-center gap-3 px-4 py-4 border-b border-border last:border-b-0">
+            <button key={i} onClick={() => (item as any).action === "pin" ? setShowPinSetup(true) : undefined} className="w-full flex items-center gap-3 px-4 py-4 border-b border-border last:border-b-0">
               <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
                 <item.icon size={18} className="text-primary" />
               </div>
               <div className="flex-1 text-left">
-                <p className="text-sm font-semibold text-foreground">{item.label}</p>
+                <div className="flex items-center gap-2">
+                  <p className="text-sm font-semibold text-foreground">{item.label}</p>
+                  {(item as any).action === "pin" && hasPin && (
+                    <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-primary/10 text-primary">Set</span>
+                  )}
+                </div>
                 {item.desc && <p className="text-xs text-muted-foreground mt-0.5">{item.desc}</p>}
               </div>
               <ChevronRight size={16} className="text-muted-foreground shrink-0" />
@@ -138,6 +205,76 @@ const Profile = () => {
           <LogOut size={16} /> Sign Out
         </button>
       </div>
+
+      {/* PIN Setup Sheet */}
+      {showPinSetup && (
+        <div className="fixed inset-0 z-50 flex items-end justify-center bg-foreground/50">
+          <div className="bg-card w-full max-w-md rounded-t-3xl pt-6 pb-4">
+            <div className="flex items-center justify-between px-5 mb-6">
+              <span className="text-lg font-bold text-foreground italic">
+                {pinStep === "enter" ? (hasPin ? "Change Payment PIN" : "Set Payment PIN") : "Confirm PIN"}
+              </span>
+              <button onClick={() => { setShowPinSetup(false); setNewPin(""); setConfirmPin(""); setPinStep("enter"); }}>
+                <X size={22} className="text-muted-foreground" />
+              </button>
+            </div>
+
+            <div className="flex justify-center gap-4 mb-3">
+              {[0, 1, 2, 3].map((i) => {
+                const currentPin = pinStep === "enter" ? newPin : confirmPin;
+                return (
+                  <div
+                    key={i}
+                    className={`w-14 h-14 rounded-xl border-2 flex items-center justify-center text-2xl font-bold ${
+                      currentPin.length > i
+                        ? "border-primary bg-primary/5 text-foreground"
+                        : "border-border bg-muted text-transparent"
+                    }`}
+                  >
+                    {currentPin.length > i ? "●" : ""}
+                  </div>
+                );
+              })}
+            </div>
+            <p className="text-center text-muted-foreground text-sm italic mb-4">
+              {pinStep === "enter" ? "Enter a 4-digit PIN" : "Re-enter PIN to confirm"}
+            </p>
+
+            {pinStep === "enter" && newPin.length === 4 && (
+              <div className="px-5 mb-4">
+                <button onClick={handleNextPin} className="w-full py-3 rounded-full opay-gradient text-primary-foreground font-semibold text-sm">
+                  Next
+                </button>
+              </div>
+            )}
+
+            <div className="grid grid-cols-3 border-t border-border">
+              {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((n) => (
+                <button
+                  key={n}
+                  onClick={() => handlePinDigit(n.toString())}
+                  className="py-5 text-center text-2xl font-bold text-foreground border-b border-r border-border active:bg-muted transition-colors italic"
+                >
+                  {n}
+                </button>
+              ))}
+              <div className="py-5" />
+              <button
+                onClick={() => handlePinDigit("0")}
+                className="py-5 text-center text-2xl font-bold text-foreground border-b border-r border-border active:bg-muted transition-colors italic"
+              >
+                0
+              </button>
+              <button
+                onClick={handlePinDelete}
+                className="py-5 flex items-center justify-center border-b border-border active:bg-muted transition-colors"
+              >
+                <Delete size={24} className="text-foreground" />
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <BottomNav />
     </div>
