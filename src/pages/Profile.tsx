@@ -177,12 +177,17 @@ const Profile = () => {
       <div className="px-4 mt-3 mb-4">
         <div className="bg-card rounded-2xl overflow-hidden">
           {bottomMenuItems.map((item, i) => (
-            <button key={i} className="w-full flex items-center gap-3 px-4 py-4 border-b border-border last:border-b-0">
+            <button key={i} onClick={() => (item as any).action === "pin" ? setShowPinSetup(true) : undefined} className="w-full flex items-center gap-3 px-4 py-4 border-b border-border last:border-b-0">
               <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
                 <item.icon size={18} className="text-primary" />
               </div>
               <div className="flex-1 text-left">
-                <p className="text-sm font-semibold text-foreground">{item.label}</p>
+                <div className="flex items-center gap-2">
+                  <p className="text-sm font-semibold text-foreground">{item.label}</p>
+                  {(item as any).action === "pin" && hasPin && (
+                    <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-primary/10 text-primary">Set</span>
+                  )}
+                </div>
                 {item.desc && <p className="text-xs text-muted-foreground mt-0.5">{item.desc}</p>}
               </div>
               <ChevronRight size={16} className="text-muted-foreground shrink-0" />
