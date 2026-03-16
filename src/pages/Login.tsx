@@ -1,8 +1,9 @@
 import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
-import { Eye, EyeOff, Loader2, CheckCircle } from "lucide-react";
+import { Eye, EyeOff, Loader2, CheckCircle, Download } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { usePWAInstall } from "@/hooks/usePWAInstall";
 import opayLogo from "@/assets/opay-logo.png";
 
 const Login = () => {
