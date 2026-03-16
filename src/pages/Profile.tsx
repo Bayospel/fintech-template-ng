@@ -26,7 +26,7 @@ const bottomMenuItems = [
 const Profile = () => {
   const navigate = useNavigate();
   const { balance } = useWallet();
-  const { profile, signOut } = useAuth();
+  const { profile, signOut, user } = useAuth();
   const displayName = profile?.display_name || "User";
   const tier = profile?.tier || 1;
   const [showBalance, setShowBalance] = useState(true);
@@ -89,8 +89,6 @@ const Profile = () => {
   const handleNextPin = () => {
     if (newPin.length === 4) setPinStep("confirm");
   };
-
-  const { user } = useAuth();
 
   return (
     <div className="min-h-screen bg-secondary pb-20 max-w-md mx-auto">
