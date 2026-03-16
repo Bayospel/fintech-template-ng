@@ -17,6 +17,7 @@ const menuItems = [
 ];
 
 const bottomMenuItems = [
+  { icon: Lock, label: "Payment PIN", desc: "Set or change your payment PIN", action: "pin" },
   { icon: Shield, label: "Security Center", desc: "Protect your funds" },
   { icon: MessageCircle, label: "Customer Service Center", desc: "" },
   { icon: Megaphone, label: "Invitation", desc: "Invite friends and earn up to ₦6,300 Bonus" },
