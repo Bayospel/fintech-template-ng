@@ -59,37 +59,20 @@ const Dashboard = () => {
       <DashboardHeader />
 
       {/* Balance Card */}
-      <div className="px-4 mt-1">
-        <div className="relative rounded-3xl overflow-hidden">
-          <img src={balanceCardImg} alt="Available Balance" className="w-full" />
-          {/* Clickable Add Money overlay */}
-          <button
-            onClick={() => setShowAddMoney(true)}
-            className="absolute bottom-[18%] right-[4%] w-[35%] h-[36%] z-10"
-            aria-label="Add Money"
-          />
-          {/* Clickable Transaction History overlay */}
-          <button
-            onClick={() => navigate("/transactions")}
-            className="absolute top-[20%] right-[4%] w-[45%] h-[30%] z-10"
-            aria-label="Transaction History"
-          />
-        </div>
-      </div>
-
-      {/* Business Service Bar */}
-      <div className="px-4 mt-2">
-        <div className="bg-gradient-to-r from-primary/5 to-primary/10 rounded-2xl px-4 py-3 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <span className="text-primary text-base">🏪</span>
-            <span className="text-foreground text-[13px]" style={{ fontFamily: 'Inter, system-ui, sans-serif' }}>
-              Business Service - Today's Sales: <span className="text-primary font-bold">₦46,000.00</span>
-            </span>
-          </div>
-          <div className="w-6 h-6 rounded-full bg-border flex items-center justify-center">
-            <ChevronRight size={14} className="text-muted-foreground" />
-          </div>
-        </div>
+      <div className="relative">
+        <img src={balanceCardImg} alt="Available Balance" className="w-full" />
+        {/* Clickable Add Money overlay */}
+        <button
+          onClick={() => setShowAddMoney(true)}
+          className="absolute bottom-[28%] right-[4%] w-[35%] h-[22%] z-10"
+          aria-label="Add Money"
+        />
+        {/* Clickable Transaction History overlay */}
+        <button
+          onClick={() => navigate("/transactions")}
+          className="absolute top-[28%] right-[4%] w-[45%] h-[18%] z-10"
+          aria-label="Transaction History"
+        />
       </div>
 
       {/* Recent Transactions */}
