@@ -94,17 +94,7 @@ const TransferAmount = () => {
     const ref = await deductMoney(amt, recipientName, bank, account, remark || remarkType);
 
     setTimeout(() => {
-      navigate("/receipt", {
-        state: {
-          amount: amt,
-          recipientName,
-          bank,
-          account,
-          remark: remark || remarkType,
-          reference: ref,
-          date: new Date().toLocaleString("en-NG"),
-        },
-      });
+      setStep("success");
     }, 2500);
   };
 
