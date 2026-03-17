@@ -7,7 +7,9 @@ import { supabase } from "@/integrations/supabase/client";
 
 const quickAmounts = [500, 1000, 2000, 5000, 9999, 10000];
 
-type Step = "amount" | "reminder" | "summary" | "pin" | "processing";
+import transferSuccessImg from "@/assets/transfer-success.jpg";
+
+type Step = "amount" | "reminder" | "summary" | "pin" | "processing" | "success";
 
 const TransferAmount = () => {
   const navigate = useNavigate();
@@ -92,17 +94,7 @@ const TransferAmount = () => {
     const ref = await deductMoney(amt, recipientName, bank, account, remark || remarkType);
 
     setTimeout(() => {
-      navigate("/receipt", {
-        state: {
-          amount: amt,
-          recipientName,
-          bank,
-          account,
-          remark: remark || remarkType,
-          reference: ref,
-          date: new Date().toLocaleString("en-NG"),
-        },
-      });
+      setStep("success");
     }, 2500);
   };
 
@@ -110,6 +102,23 @@ const TransferAmount = () => {
     if (acc.length === 10) return `${acc.slice(0, 3)} ${acc.slice(3, 6)} ${acc.slice(6)}`;
     return acc;
   };
+
+  // Step: Success
+  if (step === "success") {
+    return (
+      <div className="min-h-screen bg-secondary max-w-md mx-auto flex flex-col">
+        <div className="relative">
+          <img src={transferSuccessImg} alt="Transfer successful" className="w-full" />
+          <button
+            onClick={() => navigate("/dashboard")}
+            className="absolute top-4 right-4 text-primary font-bold text-base z-10"
+          >
+            Done
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   // Step: Processing
   if (step === "processing") {
