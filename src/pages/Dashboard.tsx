@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
-  Eye, EyeOff, ChevronRight, ArrowDownLeft,
+  ChevronRight, ArrowDownLeft,
   Plus, X, Gift, Users
 } from "lucide-react";
 import BottomNav from "@/components/BottomNav";
