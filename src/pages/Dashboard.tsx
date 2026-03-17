@@ -59,39 +59,20 @@ const Dashboard = () => {
 
       {/* Balance Card */}
       <div className="px-4 mt-1">
-        <div className="bg-primary rounded-3xl p-5 relative overflow-hidden">
-          {/* Decorative green circles */}
-          <div className="absolute top-[-20%] left-[15%] w-[45%] h-[140%] rounded-full bg-primary-foreground/8" />
-          <div className="absolute top-[10%] left-[30%] w-[35%] h-[120%] rounded-full bg-primary-foreground/5" />
-
-          {/* Top row */}
-          <div className="flex items-center justify-between relative z-10">
-            <div className="flex items-center gap-2">
-              <span className="text-primary-foreground/90 text-sm">🛡️</span>
-              <span className="text-primary-foreground font-semibold text-[13px]" style={{ fontFamily: 'Inter, system-ui, sans-serif' }}>Available Balance</span>
-              <button onClick={() => setShowBalance(!showBalance)} aria-label="Toggle balance">
-                {showBalance ? <Eye size={16} className="text-primary-foreground/70" /> : <EyeOff size={16} className="text-primary-foreground/70" />}
-              </button>
-            </div>
-            <button onClick={() => navigate("/transactions")} className="flex items-center gap-1">
-              <span className="text-primary-foreground/90 text-[12px] italic underline" style={{ fontFamily: 'Inter, system-ui, sans-serif' }}>Transaction History</span>
-              <ChevronRight size={14} className="text-primary-foreground/70" />
-            </button>
-          </div>
-
-          {/* Balance + Add Money row */}
-          <div className="flex items-center justify-between mt-4 relative z-10">
-            <span className="text-primary-foreground font-extrabold text-[22px] leading-none" style={{ fontFamily: 'Inter, system-ui, sans-serif', letterSpacing: '-0.02em' }}>
-              {showBalance ? `₦${balance.toLocaleString("en-NG", { minimumFractionDigits: 2 })}` : "₦****"}
-            </span>
-            <button
-              onClick={() => setShowAddMoney(true)}
-              className="bg-card text-primary font-bold text-[13px] px-5 py-2.5 rounded-full shadow-sm"
-              style={{ fontFamily: 'Inter, system-ui, sans-serif' }}
-            >
-              + Add Money
-            </button>
-          </div>
+        <div className="relative rounded-3xl overflow-hidden">
+          <img src={balanceCardImg} alt="Available Balance" className="w-full" />
+          {/* Clickable Add Money overlay */}
+          <button
+            onClick={() => setShowAddMoney(true)}
+            className="absolute bottom-[18%] right-[4%] w-[35%] h-[36%] z-10"
+            aria-label="Add Money"
+          />
+          {/* Clickable Transaction History overlay */}
+          <button
+            onClick={() => navigate("/transactions")}
+            className="absolute top-[20%] right-[4%] w-[45%] h-[30%] z-10"
+            aria-label="Transaction History"
+          />
         </div>
       </div>
 

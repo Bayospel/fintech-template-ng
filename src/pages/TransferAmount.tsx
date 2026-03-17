@@ -103,6 +103,23 @@ const TransferAmount = () => {
     return acc;
   };
 
+  // Step: Success
+  if (step === "success") {
+    return (
+      <div className="min-h-screen bg-secondary max-w-md mx-auto flex flex-col">
+        <div className="relative">
+          <img src={transferSuccessImg} alt="Transfer successful" className="w-full" />
+          <button
+            onClick={() => navigate("/dashboard")}
+            className="absolute top-4 right-4 text-primary font-bold text-base z-10"
+          >
+            Done
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   // Step: Processing
   if (step === "processing") {
     return (
