@@ -7,7 +7,9 @@ import { supabase } from "@/integrations/supabase/client";
 
 const quickAmounts = [500, 1000, 2000, 5000, 9999, 10000];
 
-type Step = "amount" | "reminder" | "summary" | "pin" | "processing";
+import transferSuccessImg from "@/assets/transfer-success.jpg";
+
+type Step = "amount" | "reminder" | "summary" | "pin" | "processing" | "success";
 
 const TransferAmount = () => {
   const navigate = useNavigate();
