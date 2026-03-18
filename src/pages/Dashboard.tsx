@@ -53,34 +53,38 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen bg-secondary pb-20 max-w-md mx-auto relative">
-      {/* Combined Header + Balance Card */}
+      {/* Balance Card — image only, overlays for dynamic text */}
       <div className="relative">
-        <img src={balanceCardImg} alt="Available Balance" className="w-full" />
-        
-        {/* User name + avatar overlay — top-left of the card */}
-        <div className="absolute top-[3%] left-[4%] flex items-center gap-2">
-          <div className="w-9 h-9 rounded-full bg-foreground/80 flex items-center justify-center">
-            <span className="text-card text-xs font-bold">{displayName[0]?.toUpperCase()}</span>
-          </div>
-          <span className="text-card font-semibold text-[14px] leading-tight" style={{ fontFamily: 'Inter, sans-serif', fontWeight: 600 }}>
-            Hi, {displayName.toUpperCase()}
-          </span>
-        </div>
+        <img src={balanceCardImg} alt="Available Balance" className="w-full block" />
 
-        {/* Balance overlay */}
-        <div className="absolute top-[32%] left-[4%] flex items-center gap-2">
-          <span className="text-card text-xs font-medium opacity-80">Available Balance</span>
-          <button onClick={() => setShowBalance(!showBalance)} className="opacity-80">
-            {showBalance 
-              ? <Eye size={14} className="text-card" /> 
-              : <EyeOff size={14} className="text-card" />}
+        {/* Name — white text on green area, top-left */}
+        <span
+          className="absolute text-white"
+          style={{ top: '4%', left: '4%', fontFamily: 'Inter, sans-serif', fontWeight: 600, fontSize: '14px' }}
+        >
+          Hi, {displayName.toUpperCase()}
+        </span>
+
+        {/* Available Balance label + eye toggle */}
+        <div
+          className="absolute flex items-center gap-1.5"
+          style={{ top: '38%', left: '4%' }}
+        >
+          <span className="text-white/80 text-[11px]" style={{ fontFamily: 'Inter, sans-serif' }}>Available Balance</span>
+          <button onClick={() => setShowBalance(!showBalance)}>
+            {showBalance
+              ? <Eye size={12} className="text-white/80" />
+              : <EyeOff size={12} className="text-white/80" />}
           </button>
         </div>
-        <div className="absolute top-[40%] left-[4%]">
-          <span className="text-card text-xl font-bold" style={{ fontFamily: 'Inter, sans-serif' }}>
-            {showBalance ? `₦${balance.toLocaleString("en-NG", { minimumFractionDigits: 2 })}` : "₦****"}
-          </span>
-        </div>
+
+        {/* Balance amount */}
+        <span
+          className="absolute text-white font-bold text-[22px]"
+          style={{ top: '48%', left: '4%', fontFamily: 'Inter, sans-serif' }}
+        >
+          {showBalance ? `₦${balance.toLocaleString("en-NG", { minimumFractionDigits: 2 })}` : "₦****"}
+        </span>
 
         {/* Clickable Add Money overlay */}
         <button
