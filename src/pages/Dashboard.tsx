@@ -2,13 +2,11 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   ChevronRight, ArrowDownLeft,
-  Plus, X, Gift, Users
+  Plus, X, Gift, Users, Eye, EyeOff
 } from "lucide-react";
 import BottomNav from "@/components/BottomNav";
-import DashboardHeader from "@/components/DashboardHeader";
 import { useWallet } from "@/context/WalletContext";
 import { useAuth } from "@/context/AuthContext";
-import opayLogo from "@/assets/opay-logo.png";
 import balanceCardImg from "@/assets/balance-card.jpg";
 
 import transferShortcutsImg from "@/assets/transfer-shortcuts.jpg";
@@ -55,12 +53,35 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen bg-secondary pb-20 max-w-md mx-auto relative">
-      {/* Header */}
-      <DashboardHeader />
-
-      {/* Balance Card */}
+      {/* Combined Header + Balance Card */}
       <div className="relative">
         <img src={balanceCardImg} alt="Available Balance" className="w-full" />
+        
+        {/* User name + avatar overlay — top-left of the card */}
+        <div className="absolute top-[3%] left-[4%] flex items-center gap-2">
+          <div className="w-9 h-9 rounded-full bg-foreground/80 flex items-center justify-center">
+            <span className="text-card text-xs font-bold">{displayName[0]?.toUpperCase()}</span>
+          </div>
+          <span className="text-card font-semibold text-[14px] leading-tight" style={{ fontFamily: 'Inter, sans-serif', fontWeight: 600 }}>
+            Hi, {displayName.toUpperCase()}
+          </span>
+        </div>
+
+        {/* Balance overlay */}
+        <div className="absolute top-[32%] left-[4%] flex items-center gap-2">
+          <span className="text-card text-xs font-medium opacity-80">Available Balance</span>
+          <button onClick={() => setShowBalance(!showBalance)} className="opacity-80">
+            {showBalance 
+              ? <Eye size={14} className="text-card" /> 
+              : <EyeOff size={14} className="text-card" />}
+          </button>
+        </div>
+        <div className="absolute top-[40%] left-[4%]">
+          <span className="text-card text-xl font-bold" style={{ fontFamily: 'Inter, sans-serif' }}>
+            {showBalance ? `₦${balance.toLocaleString("en-NG", { minimumFractionDigits: 2 })}` : "₦****"}
+          </span>
+        </div>
+
         {/* Clickable Add Money overlay */}
         <button
           onClick={() => setShowAddMoney(true)}
