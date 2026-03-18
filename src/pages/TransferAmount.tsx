@@ -116,6 +116,14 @@ const TransferAmount = () => {
             Done
           </button>
         </div>
+        <div className="px-4 py-4">
+          <button
+            onClick={() => navigate("/receipt", { state: { amount: amt, recipientName, bank, account, remark: remark || remarkType, reference: `${Date.now()}`, date: new Date().toLocaleString("en-NG"), isCredit: false } })}
+            className="w-full py-4 rounded-full border-2 border-primary text-primary font-semibold text-base"
+          >
+            View Details
+          </button>
+        </div>
       </div>
     );
   }
