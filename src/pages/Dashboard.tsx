@@ -2,13 +2,11 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   ChevronRight, ArrowDownLeft,
-  Plus, X, Gift, Users
+  Plus, X, Gift, Users, Eye, EyeOff
 } from "lucide-react";
 import BottomNav from "@/components/BottomNav";
-import DashboardHeader from "@/components/DashboardHeader";
 import { useWallet } from "@/context/WalletContext";
 import { useAuth } from "@/context/AuthContext";
-import opayLogo from "@/assets/opay-logo.png";
 import balanceCardImg from "@/assets/balance-card.jpg";
 
 import transferShortcutsImg from "@/assets/transfer-shortcuts.jpg";
